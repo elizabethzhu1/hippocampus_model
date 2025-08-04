@@ -165,15 +165,10 @@ def main(args):
         plt.tight_layout()
         plt.show()
 
-    # vary_parameter_and_plot(pars, 'wEE', [6.0, 6.1, 6.2, 6.21, 6.22, 6.23, 6.24, 6.25, 6.26, 6.27, 6.28, 6.29, 6.3, 6.31, 6.32, 6.33, 6.4, 6.5, 6.9, 7.0])
-    # vary_parameter_and_plot(ca3_pars, 'wEE', [1.0, 2.0, 2.5, 3.0, 3.5, 4.0])
-    # vary_parameter_and_plot(ca3_pars, 'ACh', [0.1, 0.5, 0.9])
-    # vary_parameter_and_plot(std_pars, 'wEI', [1.0, 2.0, 2.5, 3.0, 3.5, 4.0])
-
     parameter_name = 'wEE'
 
-    # parameter_space = [round(x, 1) for x in np.arange(8.5, 18, 0.1)]
-    parameter_space = [8.5, 9, 9.65, 10, 11.4, 12, 12.5, 13, 14, 15, 20]
+    # parameter_space = [8.5, 9, 9.65, 10, 11.4, 12, 12.5, 13, 14, 15, 20]
+    parameter_space = [round(x, 1) for x in np.arange(8.5, 18, 0.1)]
     # parameter_space = [8.5, 8.7, 8.9, 9.1, 9.3, 9.5, 9.7, 9.9, 10.1, 10.3, 10.5, 10.7, 10.9, 11.1, 12, 13]
     # parameter_space = [0.1, 0.3, 0.5, 0.7, 0.9, 0.93, 0.94, 0.95, 0.96, 1.0, 1.1, 1.2, 1.4, 1.6, 1.8, 2.0]
     # parameter_space = [0.5, 1.0, 2.0, 3.0, 4.0, 4.5, 4.6, 4.7, 4.8, 4.9, 5.0, 5.1, 5.2, 5.3, 5.4, 5.5, 6.0]
