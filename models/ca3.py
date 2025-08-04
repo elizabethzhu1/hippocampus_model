@@ -120,22 +120,25 @@ class WilsonCowan:
 
             # Calculate the derivative of the I population
             drI = dt / tau_I * (-rI[k] + F(wIE * rE[k] - wII * rI[k] + ext_I[k], a_I, theta_I))
+
+            if self.is_adaptation and self.is_acetylcholine:
+                drE = dt / tau_E * (-rE[k] + F(self.ACh_modulation_wEE(wEE, k) * rE[k] - wEI * rI[k] + ext_E[k] + A[k], a_E, theta_E))
+
+                # calculate adaptation variable
+                drA = - dt / tau_A * (rE[k] - A[k])
             
             # Modify equation based on features -- can stack multiple
             if self.is_adaptation:
-                drE = dt / tau_E * (-rE[k] + F(self.ACh_modulation_wEE(wEE, k) * rE[k] - wEI * rI[k] + ext_E[k] + A[k], a_E, theta_E))
+                drE = dt / tau_E * (-rE[k] + F(wEE * rE[k] - wEI * rI[k] + ext_E[k] + A[k], a_E, theta_E))
 
                 # calculate adaptation variable
                 drA = - dt / tau_A * (rE[k] - A[k])
 
             if self.is_acetylcholine:
-                # modulate wEE (decrease)
+                # modulate wEE (decrease) + a_E (increase)
                 drE = dt / tau_E * (-rE[k] + F(self.ACh_modulation_wEE(wEE, k) * rE[k] - wEI * rI[k] + ext_E[k], a_E, theta_E))
 
-                # modulate a_E (increase)
-                a_E = self.ACh_modulation_a_E(a_E, k)
-
-            # Add noise
+            # Add noise into the system
             noise_E = np.random.normal(0, 0.001)
             noise_I = np.random.normal(0, 0.001)
 
@@ -156,12 +159,19 @@ class WilsonCowan:
         ach_value = self.ACh_func(t)
         modulated_wEE = wEE * (1 - ach_value)
         return modulated_wEE
+
+
+    def ACh_modulation_a_E(self, a_E, t):
+        # modulate a_E with ACh
+        ach_value = self.ACh_func(t)
+        modulated_a_E = a_E * (1 + ach_value)
+        return modulated_a_E
     
     
     def ACh_modulation_ext_E(self, ext_E, t):
         # modulate external input with ACh
         ach_value = self.ACh_func(t)
-        modulated_ext_E = (ext_E[t] * (1 + ach_value))
+        modulated_ext_E = ext_E[t] * (1 + ach_value)
         return modulated_ext_E
 
 
@@ -206,7 +216,7 @@ class WilsonCowan:
         return fig
     
     def theta_modulation(self, input, theta_freq):
-        # modulate external input with theta oscillations
+        # Modulate external input with theta oscillations
         modulated_input = input * np.sin(2 * np.pi * theta_freq * self.range_t)
 
         return modulated_input
@@ -215,7 +225,6 @@ class WilsonCowan:
         """
         DG input is modelled as a sparse, strong input to pyramidal cells
         "The granule cells of the dentate gyrus (DG GCs) are among the most quiescent neurons in the cortical mantle with an unusually low overall firing rate (<1 Hz in vivo), but they are also capable of discharging brief bursts of 3–7 APs within tens of milliseconds (100–200 Hz), separated by long silent periods (2–15 s)."
-
         """
 
         Lt = self.range_t.size

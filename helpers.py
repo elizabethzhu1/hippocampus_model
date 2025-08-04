@@ -75,6 +75,9 @@ def set_ca3_parameters(**kwargs):
   pars['rE_init'] = 0.2  # Initial value of E
   pars['rI_init'] = 0.2  # Initial value of I
 
+  # Enable DG and EC inputs
+  pars['is_DG_input'] = True
+
   # External parameters if any
   for k in kwargs:
       pars[k] = kwargs[k]

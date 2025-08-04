@@ -2,10 +2,13 @@ from models.ca3 import WilsonCowan
 import numpy as np
 import matplotlib.pyplot as plt
 from helpers import set_parameters, my_test_plot, plot_nullclines, set_ca3_parameters, get_E_nullcline, get_I_nullcline, my_plot_trajectories, plot_complete_analysis, get_eig_Jacobian, plot_bifurcation_diagram_multiple_fps, find_multiple_fixed_points
+import argparse
 
-def main():
+
+def main(args):
     # Get default parameters
     pars = set_ca3_parameters()
+    pars.update(args.__dict__)
     
     print("=== Standard Wilson-Cowan Model ===")
     # Create standard WilsonCowan instance
@@ -17,7 +20,7 @@ def main():
 
     print("=== CA3-Specific Wilson-Cowan Model ===")
     
-    wc_ca3 = WilsonCowan(**set_ca3_parameters())
+    wc_ca3 = WilsonCowan(**pars)
 
     # Simulate CA3 model
     rE1_ca3, rI1_ca3, _, _ = wc_ca3.simulate(rE_init=0.32, rI_init=0.15)
@@ -33,6 +36,7 @@ def main():
     all_fixed_points = []  # List of lists: each inner list contains fixed points for one parameter value
     all_stabilities = []   # List of lists: each inner list contains stabilities for one parameter value
     parameter_values_list = []
+
 
     def vary_parameter_and_plot(pars, parameter_name, parameter_values):
         # Create a figure with subplots in two rows
@@ -92,6 +96,7 @@ def main():
             axes[j].set_visible(False)
 
         plt.show()
+
 
     def vary_multiple_parameters_and_plot(pars, param_dict):
         """
@@ -171,7 +176,6 @@ def main():
     parameter_space = [8.5, 9, 9.65, 10, 11.4, 12, 12.5, 13, 14, 15, 20]
     # parameter_space = [8.5, 8.7, 8.9, 9.1, 9.3, 9.5, 9.7, 9.9, 10.1, 10.3, 10.5, 10.7, 10.9, 11.1, 12, 13]
     # parameter_space = [0.1, 0.3, 0.5, 0.7, 0.9, 0.93, 0.94, 0.95, 0.96, 1.0, 1.1, 1.2, 1.4, 1.6, 1.8, 2.0]
-    # parameter_space = [x for x in np.arange(4.0, 6.0, 0.05)]
     # parameter_space = [0.5, 1.0, 2.0, 3.0, 4.0, 4.5, 4.6, 4.7, 4.8, 4.9, 5.0, 5.1, 5.2, 5.3, 5.4, 5.5, 6.0]
 
     vary_parameter_and_plot(pars, parameter_name, parameter_space)
@@ -183,7 +187,7 @@ def main():
         plot_bifurcation_diagram_multiple_fps(parameter_values_list, all_fixed_points, all_stabilities, parameter_name)
     
 
-    # Dynamical Systems Analysis Below
+    ### Dynamical Systems Analysis Below
 
     # plot nullclines
     Exc_null_rE = np.linspace(-0.01, 0.96, 100)
@@ -204,11 +208,15 @@ def main():
     plt.show()
 
 
-
 if __name__ == "__main__":
-    main()
 
+    # Introduce arguments
+    parser = argparse.ArgumentParser(description='Simulate the Wilson-Cowan model')
+    parser.add_argument('--is_DG_input', action='store_true', help='Include DG input')
+    parser.add_argument('--is_acetylcholine', action='store_true', help='Include ACh modulation')
+    parser.add_argument('--is_theta_modulation', action='store_true', help='Include theta modulation')
+    parser.add_argument('--is_adaptation', action='store_true', help='Include adaptation')
 
-"""
-which features are sensitive + can be modulated by Ach
-"""
+    args = parser.parse_args()
+
+    main(args)
