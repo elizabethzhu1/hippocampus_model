@@ -1,22 +1,19 @@
 # Wilson Cowan Models of Acetylcholine in the Hippocampus (CA3 / CA1)
 
 ## Details
-This repository creates a basic model for the CA3 and CA1 regions of the hippocampus using Wilson Cowan Equations.
+This repository is a basic model of the CA3 and CA1 regions of the hippocampus using Wilson Cowan Equations.
+<br>
 <br>
 Parameters for the Wilson Cowan Equations were modified based on biophysical properites of CA3 and CA1 respectively. For CA3, I used the following [paper](https://www.nature.com/articles/nn.3081) by Akam et al. The parameters for CA1 were loosely based off its biophysical similarities / differences relative to CA3.
 
 ### Wilson-Cowan Update Equations
 To model the change in neuronal firing rates for the excitatory population:
 
-\[
-\Delta r_E = \frac{dt}{\tau_E} \left( -r_E[k] + F(w_{EE} \cdot r_E[k] - w_{EI} \cdot r_I[k] + \text{ext}_E[k], a_E, \theta_E) \right)
-\]
+[\Delta r_E = \frac{dt}{\tau_E} \left( -r_E[k] + F(w_{EE} \cdot r_E[k] - w_{EI} \cdot r_I[k] + \text{ext}_E[k], a_E, \theta_E) \right)]
 
 To model the change in neuronal firing rates for the inhibitory population:
 
-\[
-\Delta r_I = \frac{dt}{\tau_I} \left( -r_I[k] + F(w_{IE} \cdot r_E[k] - w_{II} \cdot r_I[k] + \text{ext}_I[k], a_I, \theta_I) \right)
-\]
+[\Delta r_I = \frac{dt}{\tau_I} \left( -r_I[k] + F(w_{IE} \cdot r_E[k] - w_{II} \cdot r_I[k] + \text{ext}_I[k], a_I, \theta_I) \right)]
 
 `python3 simulate.py --is_DG_input --is_acetylcholine --is_adaptation`
 <br>
