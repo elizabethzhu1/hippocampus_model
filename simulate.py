@@ -175,7 +175,7 @@ def main():
     # parameter_space = [0.5, 1.0, 2.0, 3.0, 4.0, 4.5, 4.6, 4.7, 4.8, 4.9, 5.0, 5.1, 5.2, 5.3, 5.4, 5.5, 6.0]
 
     vary_parameter_and_plot(pars, parameter_name, parameter_space)
-    # vary_multiple_parameters_and_plot(pars, {'wEE': [6.0, 6.1, 6.2, 6.3], 'wIE': [4.5, 4.6, 4.7, 4.8, 4.9, 5.0]})
+    vary_multiple_parameters_and_plot(pars, {'wEE': [6.0, 6.1, 6.2, 6.3], 'wIE': [4.5, 4.6, 4.7, 4.8, 4.9, 5.0]})
 
     # plot fixed points in a bifurcation diagram
     if all_fixed_points and all_stabilities and parameter_values_list:
@@ -183,9 +183,7 @@ def main():
         plot_bifurcation_diagram_multiple_fps(parameter_values_list, all_fixed_points, all_stabilities, parameter_name)
     
 
-    """
-    Dynamical Systems Analysis
-    """
+    # Dynamical Systems Analysis Below
 
     # plot nullclines
     Exc_null_rE = np.linspace(-0.01, 0.96, 100)
@@ -200,12 +198,7 @@ def main():
     #     plot_fp(fp_2)
 
     # plot vector field
-
     # my_plot_trajectories(pars, 0.2, 6, 'Sample trajectories \nfor different init. conditions', wc_ca3.simulate)
-
-    # plot_complete_analysis(set_ca3_parameters())
-
-    plot_complete_analysis(set_parameters())
 
     # Show all plots at once
     plt.show()

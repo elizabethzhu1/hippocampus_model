@@ -114,7 +114,7 @@ class CA1_WilsonCowan:
         for k in range(Lt - 1):
 
             # Calculate the derivative of the E population
-            drE = dt / tau_E * (-rE[k] + F(self.ACh_modulation_wEE(wEE, k) * rE[k] - wEI * rI[k] + ext_E[k], a_E, theta_E))
+            drE = dt / tau_E * (-rE[k] + F(wEE * rE[k] - wEI * rI[k] + ext_E[k], a_E, theta_E))
 
             # Calculate the derivative of the I population
             drI = dt / tau_I * (-rI[k] + F(wIE * rE[k] - wII * rI[k] + ext_I[k], a_I, theta_I))

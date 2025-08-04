@@ -116,7 +116,7 @@ class WilsonCowan:
         for k in range(Lt - 1):
 
             # Calculate the derivative of the E population
-            drE = dt / tau_E * (-rE[k] + F(self.ACh_modulation_wEE(wEE, k) * rE[k] - wEI * rI[k] + ext_E[k], a_E, theta_E))
+            drE = dt / tau_E * (-rE[k] + F(wEE * rE[k] - wEI * rI[k] + ext_E[k], a_E, theta_E))
 
             # Calculate the derivative of the I population
             drI = dt / tau_I * (-rI[k] + F(wIE * rE[k] - wII * rI[k] + ext_I[k], a_I, theta_I))
@@ -166,8 +166,7 @@ class WilsonCowan:
 
 
     def ACh_func(self, t):
-        # ACh function that starts low, ramps up quickly and stays high
-        # Parameters for the sigmoid transition
+        # ACh function that starts low, ramps up quickly and stays high (sigmoid)
         t0 = 8000  # Time at which ramp begins
         k = 0.001  # Steepness of the ramp
         return 0 + 0.8 / (1 + np.exp(-k * (t - t0)))  # Sigmoid from 0.1 to 0.9
