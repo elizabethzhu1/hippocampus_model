@@ -221,38 +221,21 @@ def plot_FI_EI(x, FI_exc, FI_inh):
   plt.show()
 
 
-def my_test_plot(t, rE1_std, rI1_std, rE2_std, rI2_std, rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3):
-
+def my_test_plot(t, rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3):
   plt.figure(figsize=(10, 8))
-  
-  # Standard WC model plots
-  ax1 = plt.subplot(221)
-  pars = set_parameters()
-
-  ax1.plot(pars['range_t'], rE1_std, 'b', label='E population')
-  ax1.plot(pars['range_t'], rI1_std, 'r', label='I population')
-  ax1.set_ylabel('Activity')
-  ax1.set_title('Standard WC - Initial Condition 1')
-  ax1.legend(loc='best')
-
-  ax2 = plt.subplot(222, sharey=ax1)
-  ax2.plot(pars['range_t'], rE2_std, 'b', label='E population')
-  ax2.plot(pars['range_t'], rI2_std, 'r', label='I population')
-  ax2.set_title('Standard WC - Initial Condition 2')
-  ax2.legend(loc='best')
 
   # CA3 WC model plots  
-  ax3 = plt.subplot(223, sharex=ax1, sharey=ax1)
-  ax3.plot(pars['range_t'], rE1_ca3, 'b', label='E population')
-  ax3.plot(pars['range_t'], rI1_ca3, 'r', label='I population')
+  ax3 = plt.subplot(221)
+  ax3.plot(t, rE1_ca3, 'b', label='E population')
+  ax3.plot(t, rI1_ca3, 'r', label='I population')
   ax3.set_xlabel('t (ms)')
   ax3.set_ylabel('Activity')
   ax3.set_title('CA3 WC - Initial Condition 1')
   ax3.legend(loc='best')
 
-  ax4 = plt.subplot(224, sharex=ax1, sharey=ax1)
-  ax4.plot(pars['range_t'], rE2_ca3, 'b', label='E population')
-  ax4.plot(pars['range_t'], rI2_ca3, 'r', label='I population')
+  ax4 = plt.subplot(222)
+  ax4.plot(t, rE2_ca3, 'b', label='E population')
+  ax4.plot(t, rI2_ca3, 'r', label='I population')
   ax4.set_xlabel('t (ms)')
   ax4.set_title('CA3 WC - Initial Condition 2')
   ax4.legend(loc='best')

@@ -6,20 +6,19 @@ import argparse
 
 
 def main(args):
-    # Get default parameters
-    pars = set_ca3_parameters()
-    pars.update(args.__dict__)
     
-    print("=== Standard Wilson-Cowan Model ===")
-    # Create standard WilsonCowan instance
-    wc_standard = WilsonCowan(**set_parameters())
+    # print("=== Standard Wilson-Cowan Model ===")
+    # # Create standard WilsonCowan instance
+    # wc_standard = WilsonCowan(**set_parameters())
 
-    # Simulate standard model
-    rE1_std, rI1_std, _, _ = wc_standard.simulate(rE_init=0.32, rI_init=0.15)
-    rE2_std, rI2_std, _, _ = wc_standard.simulate(rE_init=0.33, rI_init=0.15)
+    # # Simulate standard model
+    # rE1_std, rI1_std, _, _ = wc_standard.simulate(rE_init=0.32, rI_init=0.15)
+    # rE2_std, rI2_std, _, _ = wc_standard.simulate(rE_init=0.33, rI_init=0.15)
 
     print("=== CA3-Specific Wilson-Cowan Model ===")
     
+    pars = set_ca3_parameters()
+    pars.update(args.__dict__)
     wc_ca3 = WilsonCowan(**pars)
 
     # Simulate CA3 model
@@ -27,7 +26,7 @@ def main(args):
     rE2_ca3, rI2_ca3, _, _ = wc_ca3.simulate(rE_init=0.33, rI_init=0.15)
 
     # Create the test plot without showing it
-    my_test_plot(pars['range_t'], rE1_std, rI1_std, rE2_std, rI2_std, rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3)
+    my_test_plot(pars['range_t'], rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3)
 
     # Set initial conditions
     rE_init = 0.32
@@ -167,8 +166,8 @@ def main(args):
 
     parameter_name = 'wEE'
 
-    # parameter_space = [8.5, 9, 9.65, 10, 11.4, 12, 12.5, 13, 14, 15, 20]
-    parameter_space = [round(x, 1) for x in np.arange(8.5, 18, 0.1)]
+    parameter_space = [8.5, 9, 9.65, 10, 11.4, 12, 12.5, 13, 14, 15, 20]
+    # parameter_space = [round(x, 1) for x in np.arange(8.5, 18, 0.1)]
     # parameter_space = [8.5, 8.7, 8.9, 9.1, 9.3, 9.5, 9.7, 9.9, 10.1, 10.3, 10.5, 10.7, 10.9, 11.1, 12, 13]
     # parameter_space = [0.1, 0.3, 0.5, 0.7, 0.9, 0.93, 0.94, 0.95, 0.96, 1.0, 1.1, 1.2, 1.4, 1.6, 1.8, 2.0]
     # parameter_space = [0.5, 1.0, 2.0, 3.0, 4.0, 4.5, 4.6, 4.7, 4.8, 4.9, 5.0, 5.1, 5.2, 5.3, 5.4, 5.5, 6.0]
