@@ -16,7 +16,7 @@ def main(args):
     if args.ach_ca3:
         ca3_pars['is_acetylcholine'] = True
     if args.adaptation_ca3:
-        ca3_pars['is_adaptation'] = True
+        ca3_pars['is_adaptation'] = False
 
     ca3_model = WilsonCowan(**ca3_pars)
 
@@ -29,7 +29,7 @@ def main(args):
     if args.ach_ca1:
         ca1_pars['is_acetylcholine'] = True
     if args.adaptation_ca1:
-        ca1_pars['is_adaptation'] = True
+        ca1_pars['is_adaptation'] = False
     ca1_pars['schaffer_input'] = rE1_ca3  # Get the excitatory firing rate from CA3 from one initial condition
 
     ca1_model = CA1_WilsonCowan(**ca1_pars)

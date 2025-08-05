@@ -15,6 +15,9 @@ To model the change in neuronal firing rates for the inhibitory population:
 
 $$\Delta r_I = \frac{dt}{\tau_I} \left( -r_I[k] + F(w_{IE} \cdot r_E[k] - w_{II} \cdot r_I[k] + \text{ext}_I[k], a_I, \theta_I) \right)$$
 
+To model the addition of acetylcholine, we simply modulate wEE (recurrent excitation) and a_E (gain) as follows:
+$$\Delta r_E = \frac{dt}{\tau_E} \left( -r_E[k] + F(w_{EE} \cdot (1 - ACh) \cdot r_E[k] - w_{EI} \cdot r_I[k] + \text{ext}_E[k], a_E \cdot (1 + ACh), \theta_E) \right)$$
+
 ## Scripts
 <!-- `python3 simulate.py --is_DG_input --is_acetylcholine --is_adaptation` 
 <br>
@@ -22,15 +25,15 @@ $$\Delta r_I = \frac{dt}{\tau_I} \left( -r_I[k] + F(w_{IE} \cdot r_E[k] - w_{II}
 <br> -->
 
 1. `python3 simulate.py --is_DG_input --is_acetylcholine --is_adaptation`
-<br>
 This script solves the Wilson Cowan differential equations using Euler's method over discrete time steps. It plots visualizations of the change in firing rate results over changes in the same parameter, a bifurcation diagram illustrating the sensitivity of the parameter, nullclines and fixed points, and it allows you to compare standard vs. customized WC models. You can include various features such as external inputs from DG, acetylcholine (varied over time), and an adaptation current. 
-<br
-`--is_DG_input'> This flag simulates an external input from the dentate gyrus (DG) to CA3, which is modeled as infrequent high amplitude pulses. Setting this flag also by default simulates an external input from the entorhinal cortex (EC) to CA3 which is modeled as a continuous low-amplitude noisy input
-<br
-`--is_acetylcholine`> This flag models a change in acetylcholine over time, in the shape of a sigmoid. Notably, increasing acetylcholine linearly decreases the wEE parameter and increases the a_E parameter. 
-<br `--is_adaptation`> This flag adds an adaptation current to the Wilson Cowan equations. 
+
+`--is_DG_input` This flag simulates an external input from the dentate gyrus (DG) to CA3, which is modeled as infrequent high amplitude pulses. Setting this flag also by default simulates an external input from the entorhinal cortex (EC) to CA3 which is modeled as a continuous low-amplitude noisy input
+
+`--is_acetylcholine` This flag models a change in acetylcholine over time, in the shape of a sigmoid. Notably, increasing acetylcholine linearly decreases the wEE parameter and increases the a_E parameter. 
+`--is_adaptation` This flag adds an adaptation current to the Wilson Cowan equations. 
 <br>
 <br>
 
 2. `python3 ca3_to_ca1.py --dg_input_ca3 --ach_ca3 --adaptation_ca3 --ach_ca1 --adaptation_ca1`
-This script visualizes the effects of CA3 on the CA1 region of the hippocampus. 
+<br>
+This script simulates the effects of CA3 on the CA1 region of the hippocampus. CA3 and CA1 are each represented by a Wilson-Cowan Model, each with their own custom paramters (can be tweaked). Acetylcholine can be added to both CA3 and CA1. 
