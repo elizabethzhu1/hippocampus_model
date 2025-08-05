@@ -64,7 +64,7 @@ def set_ca3_parameters(**kwargs):
   pars['wII'] = 10  # I to I
 
   # External input
-  pars['ext_E'] = 0.5
+  pars['ext_E'] = 0.3
   pars['ext_I'] = 0  # interneurons are being locally excited not externally
 
   pars['tau_A'] = 10  # not used for now

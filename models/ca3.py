@@ -177,7 +177,7 @@ class WilsonCowan:
 
     def ACh_func(self, t):
         # ACh function that starts low, ramps up quickly and stays high (sigmoid)
-        t0 = 8000  # Time at which ramp begins
+        t0 = 6000  # Time at which ramp begins
         k = 0.001  # Steepness of the ramp
         return 0 + 0.8 / (1 + np.exp(-k * (t - t0)))  # Sigmoid from 0.1 to 0.9
 
