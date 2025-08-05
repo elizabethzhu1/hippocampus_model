@@ -29,11 +29,11 @@ This script solves the Wilson Cowan differential equations using Euler's method 
 
 `--is_DG_input` This flag simulates an external input from the dentate gyrus (DG) to CA3, which is modeled as infrequent high amplitude pulses. Setting this flag also by default simulates an external input from the entorhinal cortex (EC) to CA3 which is modeled as a continuous low-amplitude noisy input
 
-`--is_acetylcholine` This flag models a change in acetylcholine over time, in the shape of a sigmoid. Notably, increasing acetylcholine linearly decreases the wEE parameter and increases the a_E parameter. 
+`--is_acetylcholine` This flag models a change in acetylcholine over time, in the shape of a sigmoid.
+
 `--is_adaptation` This flag adds an adaptation current to the Wilson Cowan equations. 
 <br>
 <br>
 
 2. `python3 ca3_to_ca1.py --dg_input_ca3 --ach_ca3 --adaptation_ca3 --ach_ca1 --adaptation_ca1`
-<br>
-This script simulates the effects of CA3 on the CA1 region of the hippocampus. CA3 and CA1 are each represented by a Wilson-Cowan Model, each with their own custom paramters (can be tweaked). Acetylcholine can be added to both CA3 and CA1. 
+This script simulates the effects of CA3 on the CA1 region of the hippocampus. CA3 and CA1 are each represented by a Wilson-Cowan Model, each with their own custom paramters. Setting the acetylcholine flag simulates a release in both regions.
