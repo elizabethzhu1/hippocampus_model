@@ -157,6 +157,48 @@ def classify_dynamical_regime(pars):
         return "multistable"
     else:
         return "complex"
+    
+# def classify_dynamical_regime_simple(pars):
+    # """
+    # Classify dynamical regime using existing helper functions
+    # """
+    # try:
+    #     fixed_points = find_multiple_fixed_points(pars)
+        
+    #     if not fixed_points:
+    #         return "no_fixed_points"
+        
+    #     stability_info = [analyze_stability_simple(fp, pars) for fp in fixed_points]
+        
+    #     # Count stable and unstable fixed points
+    #     n_stable = sum(1 for s in stability_info if s['stability'] == 'stable')
+    #     n_unstable = sum(1 for s in stability_info if s['stability'] == 'unstable')
+        
+    #     # Check for oscillations (Hopf bifurcation)
+    #     has_oscillations = False
+    #     for stability in stability_info:
+    #         eigenvalues = stability['eigenvalues']
+    #         real_parts = np.real(eigenvalues)
+    #         imag_parts = np.imag(eigenvalues)
+            
+    #         # Check for complex conjugate eigenvalues with small real part
+    #         if np.any(np.abs(real_parts) < 0.01) and np.any(np.abs(imag_parts) > 0.01):
+    #             has_oscillations = True
+    #             break
+        
+    #     # Classify regime
+    #     if n_stable == 0 and n_unstable >= 1:
+    #         return "unstable"
+    #     elif n_stable == 1 and n_unstable == 0:
+    #         return "stable_fixed_point"
+    #     elif n_stable == 2 and n_unstable == 0:
+    #         return "bistable"
+    #     elif n_stable > 2 and n_unstable == 0:
+    #         return "multistable"
+    #     else:
+    #         return "complex"
+    # except:
+    #     return "error"
 
 def create_2d_bifurcation_diagram(param1_name, param1_range, param2_name, param2_range, 
                                  base_pars, regime_colors=None):

@@ -711,4 +711,3 @@ def plot_bifurcation_diagram_multiple_fps(parameter_values, all_fixed_points, al
   plt.grid(True, alpha=0.3)
   plt.tight_layout()
   plt.show()
-
