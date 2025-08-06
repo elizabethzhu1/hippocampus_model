@@ -29,7 +29,7 @@ def set_ca3_parameters(**kwargs):
   pars['tau_A'] = 10  # not used for now
 
   # simulation parameters
-  pars['T'] = 1500.        # Total duration of simulation [ms]
+  pars['T'] = 1000.        # Total duration of simulation [ms]
   pars['dt'] = .1       # Simulation time step [ms]
   pars['rE_init'] = 0.2  # Initial value of E
   pars['rI_init'] = 0.2  # Initial value of I
@@ -71,7 +71,7 @@ def set_ca1_parameters(**kwargs):
   pars['tau_A'] = 10
   
   # Simulation parameters
-  pars['T'] = 1500.      
+  pars['T'] = 1000.      
   pars['dt'] = .1   
   pars['rE_init'] = 0.2 
   pars['rI_init'] = 0.2 
@@ -88,34 +88,35 @@ def set_ca1_parameters(**kwargs):
 def set_dg_parameters(**kwargs):
   pars = {}
 
-  # SAME AS CA3 for now
+  # Biological: DG granule cells are slower to respond
+  pars['tau_E'] = 3.0    # Slower excitatory dynamics than CA3/CA1
+  pars['tau_I'] = 4.8    # Inhibitory same as CA3
 
-  pars['tau_E'] = 1.8    # Timescale of the E population [ms]
-  pars['tau_I'] = 4.8    # Timescale of the I population [ms]
+  # Granule cells: low gain (less excitable)
+  pars['a_E'] = 0.8       # Reduced gain to make activation harder
+  pars['a_I'] = 2.5       # Interneurons still sharp
 
-  pars['a_E'] = 1.0     # Gain of the E population
-  pars['a_I'] = 2.0    # Gain of the I population
-  
-  pars['theta_E'] = 2.8  # Threshold of the E population
-  pars['theta_I'] = 3.0  # Threshold of the I population
+  # Thresholds: Granule cells are hard to activate
+  pars['theta_E'] = 3.5   # Higher threshold for excitatory pop.
+  pars['theta_I'] = 2.8   # Slightly lower for inhibition
 
-  pars['wEE'] = 10 # E to E -- big bifurcation between 6.8 and 6.9, all else constant
-  pars['wIE'] = 12  # E to I
-  
-  pars['wEI'] = 10  # I to E
-  pars['wII'] = 10  # I to I
+  # Weights: No recurrent excitation; strong inhibition
+  pars['wEE'] = 1.0       # Granule cells don’t excite each other
+  pars['wIE'] = 8.0       # Granule cells excite interneurons
+  pars['wEI'] = 10.0      # Inhibition to granule cells is strong
+  pars['wII'] = 6.0       # Some inhibitory recurrence
 
-  # External input
-  pars['ext_E'] = 0.3
-  pars['ext_I'] = 0  # interneurons are being locally excited not externally
+  # External input: usually from EC (theta-modulated)
+  pars['ext_E'] = 0.3     # Will typically be overwritten with EC input
+  pars['ext_I'] = 0       # Feedforward input typically stronger (EC → I)
 
-  pars['tau_A'] = 10  # not used for now
+  pars['tau_A'] = 10      # Not used yet
 
-  # simulation parameters
-  pars['T'] = 1500.        # Total duration of simulation [ms]
-  pars['dt'] = .1       # Simulation time step [ms]
-  pars['rE_init'] = 0.2  # Initial value of E
-  pars['rI_init'] = 0.2  # Initial value of I
+  # Simulation parameters
+  pars['T'] = 1000.0
+  pars['dt'] = 0.1
+  pars['rE_init'] = 0.2
+  pars['rI_init'] = 0.2
 
   # External parameters if any
   for k in kwargs:
