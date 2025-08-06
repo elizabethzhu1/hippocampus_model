@@ -22,7 +22,7 @@ Solving Method -- Euler's Method
 Run simulations with different initial conditions (rE_init, rI_init)
 """
 
-class CA1_WilsonCowan:
+class DG_WilsonCowan:
     def __init__(self, wEE, wEI, wIE, wII, tau_E, tau_I, a_E, a_I, theta_E, theta_I, rE_init, rI_init, dt, range_t, ext_E, ext_I, T, tau_A, is_adaptation=False, is_acetylcholine=False):
         self.wEE = wEE 
         self.wEI = wEI
@@ -39,13 +39,14 @@ class CA1_WilsonCowan:
         self.ext_E = ext_E
         self.ext_I = ext_I
         self.dt = dt
-        self.range_t = range_t  # discrete time points
+        self.range_t = range_t 
         self.T = T
         self.tau_A = tau_A
 
         # boolean flags for features
         self.is_adaptation = is_adaptation
         self.is_acetylcholine = is_acetylcholine
+
 
     def simulate(self, **kwargs):
         """
@@ -69,31 +70,23 @@ class CA1_WilsonCowan:
         rE = np.append(rE_init, np.zeros(Lt - 1))
         rI = np.append(rI_init, np.zeros(Lt - 1))
 
-        # initialize adaptation variable
-        A = np.append(0, np.zeros(Lt - 1))
-        
-        # initialize external inputs
-        ext_E = self.ext_E * np.ones(Lt)
-        ext_I = self.ext_I * np.ones(Lt)
-
-        # add Gaussian noise to external inputs
-        ext_E = np.random.normal(ext_E, 0.01, Lt)
-        ext_I = np.random.normal(ext_I, 0.01, Lt)
-
         tau_E = self.tau_E
         tau_I = self.tau_I
+        theta_E = self.theta_E
+        theta_I = self.theta_I
         wEE = self.wEE
         wEI = self.wEI
         wIE = self.wIE
         wII = self.wII
         a_E = self.a_E
         a_I = self.a_I
-        theta_E = self.theta_E
-        theta_I = self.theta_I
         dt = self.dt
+        tau_A = self.tau_A
         ext_E = self.ext_E
         ext_I = self.ext_I
-        tau_A = self.tau_A
+
+        # Initialize adaptation starting rates
+        A = np.append(0, np.zeros(Lt - 1))
 
         # Simulate the Wilson-Cowan equations
         for k in range(Lt - 1):
@@ -103,6 +96,12 @@ class CA1_WilsonCowan:
 
             # Calculate the derivative of the I population
             drI = dt / tau_I * (-rI[k] + F(wIE * rE[k] - wII * rI[k] + ext_I[k], a_I, theta_I))
+
+            if self.is_adaptation and self.is_acetylcholine:
+                drE = dt / tau_E * (-rE[k] + F(self.ACh_modulation_wEE(wEE, k) * rE[k] - wEI * rI[k] + ext_E[k] + A[k], a_E, theta_E))
+
+                # calculate adaptation variable
+                drA = - dt / tau_A * (rE[k] - A[k])
             
             # Modify equation based on features -- can stack multiple
             if self.is_adaptation:
@@ -129,14 +128,15 @@ class CA1_WilsonCowan:
 
         # return arrays with all the rates over time
         return rE, rI
-    
 
+    
     def ACh_modulation_wEE(self, wEE, t):
         # modulate wEE with ACh
         ach_value = self.ACh_func(t)
         modulated_wEE = wEE * (1 - ach_value)
         return modulated_wEE
-    
+
+
     def ACh_modulation_a_E(self, a_E, t):
         # modulate a_E with ACh
         ach_value = self.ACh_func(t)
@@ -152,10 +152,9 @@ class CA1_WilsonCowan:
 
 
     def ACh_func(self, t):
-        # ACh function that starts low, ramps up quickly and stays high
-        t0 = 18000  # Time ramp begins
-        k = 0.0002  # Steepness of how quickly ACh level ramps up
-
+        # ACh function that starts low, ramps up quickly and stays high (sigmoid)
+        t0 = 6000  # Time at which ramp begins
+        k = 0.001  # Steepness of the ramp
         return 0 + 0.8 / (1 + np.exp(-k * (t - t0)))  # Sigmoid from 0.1 to 0.9
 
 
@@ -192,21 +191,17 @@ class CA1_WilsonCowan:
         plt.tight_layout()
         return fig
     
-
     def theta_modulation(self, input, theta_freq):
-        # modulate external input with theta oscillations
+        # Modulate external input with theta oscillations
         modulated_input = input * np.sin(2 * np.pi * theta_freq * self.range_t)
 
         return modulated_input
-    
 
+    
     def EC_input(self):
         # EC input is a low amplitude, continuous input
         baseline = 0.5
-        Lt = self.range_t.size
 
-        # Create noise for each millisecond, then interpolate to time steps
-        # Calculate number of milliseconds in the simulation
         num_ms = int(self.T)
         
         # Generate noise for each millisecond
@@ -222,30 +217,3 @@ class CA1_WilsonCowan:
 
         return ec_input
         
-
-"""
-ext_E --> wDG_E * ext_DG + wEC_E * ext_EC
-ext_I --> wDG_I * ext_DG + wEC_I * ext_ECwEC * ext_EC
-
-3600:40
-90:1
-EC:DG = 90:1 (ratio of EC to DG inputs)
-
-ext_EC (theta modulated) = A_theta * sin(2 * pi * theta_freq * t) + baseline
-- context, sensory input
-- low amplitude + continuous (high frequency)
-- perforant path
-- 3600 perforant path inputs
-
-ext_DG (strong, sparse input to pyramidal cells)
-- novel specific events
-- brief large-amplitude pulses
-- (first, EC projects to granule cells in DG)
-- strongest excitatory input to CA3 (trisynaptic circuit)
-- mossy fibers 
-    - muscarinic inhibition of MF synapses by activating inhibitory cells that release GABA
-- 46 mossy fibre inputs (sparse)
-- Although DG input is sparse, the unitary amplitude is ~10× larger than perforant path EPSCs in CA3 (Henze)
-
-modeling non-REM sleep + quiet wakefulness --> when SWRs occur
-"""

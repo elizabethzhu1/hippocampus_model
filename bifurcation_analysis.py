@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import fsolve
 from scipy.linalg import eig
-from helpers import set_parameters, set_ca3_parameters, F, dF, EIderivs, simulate_wc
+from helpers import set_ca3_parameters, dF, EIderivs, simulate_wc
 
 def find_fixed_points(pars, rE_guess=0.5, rI_guess=0.3):
     """
@@ -356,7 +356,7 @@ def analyze_parameter_coexpression():
     Analyze the coexpression of W_EE and W_IE parameters
     """
     # Get base parameters
-    std_pars = set_parameters()
+
     ca3_pars = set_ca3_parameters()
     
     print("=== 2D Bifurcation Analysis: W_EE vs W_IE ===")
@@ -501,7 +501,7 @@ def analyze_other_parameter_pairs():
     """
     Analyze other interesting parameter pairs
     """
-    std_pars = set_parameters()
+    std_pars = set_ca3_parameters()
     
     # Define parameter pairs to analyze
     parameter_pairs = [

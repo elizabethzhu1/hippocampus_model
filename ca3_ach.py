@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from models.ca3 import WilsonCowan
+from models.ca3 import CA3_WilsonCowan
 from helpers import set_ca3_parameters
 
 def plot_ca3_with_ach():
@@ -13,11 +13,11 @@ def plot_ca3_with_ach():
     # Create CA3 Wilson-Cowan model with DG input + without (just noise)
     ca3_pars['is_acetylcholine'] = True
     ca3_pars['is_DG_input'] = False
-    wc_ca3 = WilsonCowan(**ca3_pars)
+    wc_ca3 = CA3_WilsonCowan(**ca3_pars)
 
     ca3_pars['is_acetylcholine'] = True
     ca3_pars['is_DG_input'] = True
-    wc_ca3_dg = WilsonCowan(**ca3_pars)
+    wc_ca3_dg = CA3_WilsonCowan(**ca3_pars)
     
     # Simulate both models
     rE_ca3, rI_ca3, _, _ = wc_ca3.simulate(rE_init=0.32, rI_init=0.15)

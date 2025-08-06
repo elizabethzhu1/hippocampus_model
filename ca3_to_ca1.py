@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from helpers import set_ca3_parameters, set_ca1_parameters, my_test_plot_ca3_to_ca1_with_dg
-from models.ca3 import WilsonCowan
+from models.ca3 import CA3_WilsonCowan
 from models.ca1 import CA1_WilsonCowan
 import argparse
 
@@ -18,7 +18,7 @@ def main(args):
     if args.adaptation_ca3:
         ca3_pars['is_adaptation'] = False
 
-    ca3_model = WilsonCowan(**ca3_pars)
+    ca3_model = CA3_WilsonCowan(**ca3_pars)
 
     # Get CA3 activity and DG/EC inputs
     rE1_ca3, rI1_ca3, dg_input1, ec_input1 = ca3_model.simulate(rE_init=0.33, rI_init=0.15)

@@ -1,8 +1,7 @@
-from models.ca3 import WilsonCowan
 import numpy as np
 import matplotlib.pyplot as plt
 from helpers import my_test_plot, plot_nullclines, set_ca3_parameters, get_E_nullcline, get_I_nullcline, plot_bifurcation_diagram_multiple_fps, find_multiple_fixed_points, get_eig_Jacobian
-from models.ca3 import WilsonCowan
+from models.ca3 import CA3_WilsonCowan
 from models.ca1 import CA1_WilsonCowan
 import argparse
 
@@ -13,7 +12,7 @@ def main(args):
     
     pars = set_ca3_parameters()
     pars.update(args.__dict__)
-    wc_ca3 = WilsonCowan(**pars)
+    wc_ca3 = CA3_WilsonCowan(**pars)
 
     # Simulate CA3 model
     rE1_ca3, rI1_ca3, _, _ = wc_ca3.simulate(rE_init=0.32, rI_init=0.15)
@@ -60,8 +59,8 @@ def vary_parameter_and_plot(pars, parameter_name, parameter_values, rE_init, rI_
         y_min, y_max = float('inf'), float('-inf')
         for value in parameter_values:
             pars[parameter_name] = value
-            wc_standard = WilsonCowan(**pars)
-            rE_std, rI_std, _, _ = wc_standard.simulate(rE_init=rE_init, rI_init=rI_init)
+            wc = CA3_WilsonCowan(**pars)
+            rE_std, rI_std, _, _ = wc.simulate(rE_init=rE_init, rI_init=rI_init)
             y_min = min(y_min, min(rE_std), min(rI_std))
             y_max = max(y_max, max(rE_std), max(rI_std))
 
@@ -79,7 +78,7 @@ def vary_parameter_and_plot(pars, parameter_name, parameter_values, rE_init, rI_
             pars[parameter_name] = value
             
             if model_type == 'ca3':
-                wc_standard = WilsonCowan(**pars)
+                wc_standard = CA3_WilsonCowan(**pars)
             elif model_type == 'ca1':
                 wc_standard = CA1_WilsonCowan(**pars) 
             
@@ -143,7 +142,7 @@ def vary_multiple_parameters_and_plot(pars, param_dict, rE_init, rI_init, model_
             temp_pars = pars.copy()
             temp_pars[param_names[0]] = val1
             temp_pars[param_names[1]] = val2
-            wc = WilsonCowan(**temp_pars)
+            wc = CA3_WilsonCowan(**temp_pars)
             rE, rI = wc.simulate(rE_init=rE_init, rI_init=rI_init)
             y_min = min(y_min, min(rE), min(rI))
             y_max = max(y_max, max(rE), max(rI))
@@ -164,7 +163,7 @@ def vary_multiple_parameters_and_plot(pars, param_dict, rE_init, rI_init, model_
             
             # Simulate and plot
             if model_type == 'ca3':
-                wc = WilsonCowan(**temp_pars)
+                wc = CA3_WilsonCowan(**temp_pars)
             elif model_type == 'ca1':
                 wc = CA1_WilsonCowan(**temp_pars) 
         

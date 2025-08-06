@@ -1,5 +1,5 @@
 import numpy as np
-from helpers import F, dF, set_parameters, my_test_plot
+from helpers import F
 import matplotlib.pyplot as plt
 
 """
@@ -22,7 +22,7 @@ Solving Method -- Euler's Method
 Run simulations with different initial conditions (rE_init, rI_init)
 """
 
-class WilsonCowan:
+class CA3_WilsonCowan:
     def __init__(self, wEE, wEI, wIE, wII, tau_E, tau_I, a_E, a_I, theta_E, theta_I, rE_init, rI_init, dt, range_t, ext_E, ext_I, T, tau_A, is_adaptation=False, is_acetylcholine=False, is_DG_input=False, is_theta_modulation=False):
         self.wEE = wEE 
         self.wEI = wEI

@@ -2,47 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.optimize as opt
 
-def set_parameters(**kwargs):
-  pars = {}
-
-  # Excitatory parameters
-  pars['tau_E'] = 1.     # Timescale of the E population [ms]
-  pars['a_E'] = 1.2      # Gain of the E population
-  pars['theta_E'] = 2.8  # Threshold of the E population
-
-  # Inhibitory parameters
-  pars['tau_I'] = 2.    # Timescale of the I population [ms]
-  pars['a_I'] = 0.8     # Gain of the I population
-  pars['theta_I'] = 4.  # Threshold of the I population
-
-  # Produce oscillations?
-  pars['wEE'] = 4.8  # recurrent excitation
-  pars['wEI'] = 4.8  # inhibitory to excitatory
-
-  pars['wII'] = 1.2  # recurrent inhibition
-  pars['wIE'] = 6   # excitatory to inhibitory
-
-  # External input
-  pars['ext_E'] = 0.8
-  pars['ext_I'] = 0
-
-  pars['tau_A'] = 0.1
-
-  # simulation parameters
-  pars['T'] = 1500        # Total duration of simulation [ms]
-  pars['dt'] = .1       # Simulation time step [ms]
-  pars['rE_init'] = 0.2  # Initial value of E
-  pars['rI_init'] = 0.2  # Initial value of I
-
-  # External parameters if any
-  for k in kwargs:
-      pars[k] = kwargs[k]
-
-  # Vector of discretized time points [ms]
-  pars['range_t'] = np.arange(0, pars['T'], pars['dt'])
-
-  return pars
-
 def set_ca3_parameters(**kwargs):
   pars = {}
 
@@ -75,9 +34,6 @@ def set_ca3_parameters(**kwargs):
   pars['rE_init'] = 0.2  # Initial value of E
   pars['rI_init'] = 0.2  # Initial value of I
 
-  # Enable DG and EC inputs
-  pars['is_DG_input'] = True
-
   # External parameters if any
   for k in kwargs:
       pars[k] = kwargs[k]
@@ -109,7 +65,7 @@ def set_ca1_parameters(**kwargs):
   pars['wII'] = 5      
   
   # External input - CA1 receives different input patterns
-  pars['ext_E'] = 0.5   
+  pars['ext_E'] = 0.3
   pars['ext_I'] = 0    
   
   pars['tau_A'] = 10
@@ -127,6 +83,47 @@ def set_ca1_parameters(**kwargs):
   # Vector of discretized time points [ms]
   pars['range_t'] = np.arange(0, pars['T'], pars['dt'])
   
+  return pars
+
+def set_dg_parameters(**kwargs):
+  pars = {}
+
+  # SAME AS CA3 for now
+
+  pars['tau_E'] = 1.8    # Timescale of the E population [ms]
+  pars['tau_I'] = 4.8    # Timescale of the I population [ms]
+
+  pars['a_E'] = 1.0     # Gain of the E population
+  pars['a_I'] = 2.0    # Gain of the I population
+  
+  pars['theta_E'] = 2.8  # Threshold of the E population
+  pars['theta_I'] = 3.0  # Threshold of the I population
+
+  pars['wEE'] = 10 # E to E -- big bifurcation between 6.8 and 6.9, all else constant
+  pars['wIE'] = 12  # E to I
+  
+  pars['wEI'] = 10  # I to E
+  pars['wII'] = 10  # I to I
+
+  # External input
+  pars['ext_E'] = 0.3
+  pars['ext_I'] = 0  # interneurons are being locally excited not externally
+
+  pars['tau_A'] = 10  # not used for now
+
+  # simulation parameters
+  pars['T'] = 1500.        # Total duration of simulation [ms]
+  pars['dt'] = .1       # Simulation time step [ms]
+  pars['rE_init'] = 0.2  # Initial value of E
+  pars['rI_init'] = 0.2  # Initial value of I
+
+  # External parameters if any
+  for k in kwargs:
+      pars[k] = kwargs[k]
+
+  # Vector of discretized time points [ms]
+  pars['range_t'] = np.arange(0, pars['T'], pars['dt'])
+
   return pars
 
 def F(x, a, theta):
@@ -147,24 +144,6 @@ def F(x, a, theta):
   # f = (1 + np.exp(-a)) ** -1
 
   return f
-
-# def F(x, a, theta):
-#   """
-#   Population activation function, F-I curve
-
-#   Args:
-#     x     : the population input
-#     a     : the gain of the function
-#     theta : the threshold of the function
-
-#   Returns:
-#     f     : the population activation response f(x) for input x
-#   """
-
-#   # add the expression of f = F(x)
-#   f = (1 + np.exp(-a * (x - theta)))**-1
-
-#   return f
 
 
 def dF(x, a, theta):
@@ -247,22 +226,6 @@ def my_test_plot(t, rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3):
 def my_test_plot_ca3_to_ca1(t, rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3, rE1_ca1, rI1_ca1, rE2_ca1, rI2_ca1):
 
   plt.figure(figsize=(10, 8))
-  
-  # Standard WC model plots
-  ax1 = plt.subplot(221)
-  pars = set_parameters()
-
-  ax1.plot(pars['range_t'], rE1_ca3, 'b', label='E population')
-  ax1.plot(pars['range_t'], rI1_ca3, 'r', label='I population')
-  ax1.set_ylabel('Activity')
-  ax1.set_title('CA3 WC - Initial Condition 1')
-  ax1.legend(loc='best')
-
-  ax2 = plt.subplot(222, sharey=ax1)
-  ax2.plot(pars['range_t'], rE2_ca3, 'b', label='E population')
-  ax2.plot(pars['range_t'], rI2_ca3, 'r', label='I population')
-  ax2.set_title('CA3 WC - Initial Condition 2')
-  ax2.legend(loc='best')
 
   # CA3 WC model plots  
   ax3 = plt.subplot(223, sharex=ax1, sharey=ax1)
@@ -282,6 +245,7 @@ def my_test_plot_ca3_to_ca1(t, rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3, rE1_ca1, rI1_
 
   plt.tight_layout()
   plt.show() # removed to allow all plots to be shown at once
+
 def my_test_plot_ca3_to_ca1_with_dg(t, rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3, rE1_ca1, rI1_ca1, rE2_ca1, rI2_ca1, dg_input, ec_input):
 
   fig, axes = plt.subplots(2, 3, figsize=(15, 10))
