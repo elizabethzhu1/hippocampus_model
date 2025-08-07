@@ -131,8 +131,12 @@ def F(x, a, theta):
     f     : the population activation response f(x) for input x
   """
 
-  # add the expression of f = F(x)
-  f = (1 + np.exp(-a * (x - theta)))**-1 - (1 + np.exp(a * theta))**-1
+  # Clip inputs to avoid overflow in exp (only relevant for fsolve)
+  x_clipped = np.clip(x, -500/a, 500/a + theta)
+  
+  # Calculate activation with clipped inputs
+  f = (1 + np.exp(-a * (x_clipped - theta)))**-1 - (1 + np.exp(a * theta))**-1
+
   # f = (1 + np.exp(-a)) ** -1
 
   return f
@@ -192,27 +196,24 @@ def plot_FI_EI(x, FI_exc, FI_inh):
   plt.show()
 
 
-def my_test_plot(t, rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3):
-  plt.figure(figsize=(10, 8))
+def my_test_plot(t, rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3, region):
+  plt.figure(figsize=(10, 5))
 
   # CA3 WC model plots  
-  ax3 = plt.subplot(221)
+  ax3 = plt.subplot(121)
   ax3.plot(t, rE1_ca3, 'b', label='E population')
   ax3.plot(t, rI1_ca3, 'r', label='I population')
   ax3.set_xlabel('t (ms)')
   ax3.set_ylabel('Activity')
-  ax3.set_title('CA3 WC - Initial Condition 1')
+  ax3.set_title(f'{region} Mean Firing Rates - Initial Condition 1')
   ax3.legend(loc='best')
 
-  ax4 = plt.subplot(222)
+  ax4 = plt.subplot(122)
   ax4.plot(t, rE2_ca3, 'b', label='E population')
   ax4.plot(t, rI2_ca3, 'r', label='I population')
   ax4.set_xlabel('t (ms)')
-  ax4.set_title('CA3 WC - Initial Condition 2')
+  ax4.set_title(f'{region} Mean Firing Rates - Initial Condition 2')
   ax4.legend(loc='best')
-
-  plt.tight_layout()
-  # plt.show() # removed to allow all plots to be shown at once
 
 
 def my_test_plot_ca3_to_ca1(t, rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3, rE1_ca1, rI1_ca1, rE2_ca1, rI2_ca1):
@@ -238,83 +239,6 @@ def my_test_plot_ca3_to_ca1(t, rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3, rE1_ca1, rI1_
   plt.tight_layout()
   plt.show() # removed to allow all plots to be shown at once
 
-def my_test_plot_ca3_to_ca1_with_dg(t, rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3, rE1_ca1, rI1_ca1, rE2_ca1, rI2_ca1, dg_input, ec_input):
-
-  fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-  
-  # CA3 plots with DG input
-  ax1 = axes[0, 0]
-  ax1.plot(t, rE1_ca3, 'b', label='E population', linewidth=2)
-  ax1.plot(t, rI1_ca3, 'r', label='I population', linewidth=2)
-  ax1.set_ylabel('Activity')
-  ax1.set_title('CA3 WC - Initial Condition 1')
-  ax1.set_ylim(0, 0.5)  # Consistent y-axis limits
-  ax1.legend(loc='best')
-  ax1.grid(True, alpha=0.3)
-
-  ax2 = axes[0, 1]
-  ax2.plot(t, rE2_ca3, 'b', label='E population', linewidth=2)
-  ax2.plot(t, rI2_ca3, 'r', label='I population', linewidth=2)
-  ax2.set_title('CA3 WC - Initial Condition 2')
-  ax2.set_ylim(0, 0.5)  # Consistent y-axis limits
-  ax2.legend(loc='best')
-  ax2.grid(True, alpha=0.3)
-
-  # DG input plot
-  ax3 = axes[0, 2]
-  # Show actual DG input values without normalization
-  ax3.plot(t, dg_input, 'g', label='DG Input', linewidth=2)
-  ax3.set_xlabel('t (ms)')
-  ax3.set_ylabel('DG Input Amplitude')
-  ax3.set_title('DG Input to CA3')
-  ax3.legend(loc='best')
-  ax3.grid(True, alpha=0.3)
-
-  # CA1 plots
-  ax5 = axes[1, 0]
-  ax5.plot(t, rE1_ca1, 'b', label='E population', linewidth=2)
-  ax5.plot(t, rI1_ca1, 'r', label='I population', linewidth=2)
-  ax5.set_xlabel('t (ms)')
-  ax5.set_ylabel('Activity')
-  ax5.set_title('CA1 WC - Initial Condition 1')
-  ax5.set_ylim(0, 0.5)  # Consistent y-axis limits
-  ax5.legend(loc='best')
-  ax5.grid(True, alpha=0.3)
-
-  ax6 = axes[1, 1]
-  ax6.plot(t, rE2_ca1, 'b', label='E population', linewidth=2)
-  ax6.plot(t, rI2_ca1, 'r', label='I population', linewidth=2)
-  ax6.set_xlabel('t (ms)')
-  ax6.set_title('CA1 WC - Initial Condition 2')
-  ax6.set_ylim(0, 0.5)  # Consistent y-axis limits
-  ax6.legend(loc='best')
-  ax6.grid(True, alpha=0.3)
-
-  # Combined plot showing DG input and CA3 response
-  ax7 = axes[1, 2]
-  ax7_twin = ax7.twinx()
-  
-  # Plot DG input on primary y-axis (actual values)
-  line1 = ax7.plot(t, dg_input, 'g', label='DG Input', linewidth=2)
-  ax7.set_xlabel('t (ms)')
-  ax7.set_ylabel('DG Input Amplitude', color='g')
-  ax7.tick_params(axis='y', labelcolor='g')
-  
-  # Plot CA3 E activity on secondary y-axis
-  line2 = ax7_twin.plot(t, rE1_ca3, 'b', label='CA3 E Activity', linewidth=2)
-  ax7_twin.set_ylabel('CA3 E Activity', color='b')
-  ax7_twin.tick_params(axis='y', labelcolor='b')
-  
-  ax7.set_title('DG Input vs CA3 Response')
-  ax7.grid(True, alpha=0.3)
-  
-  # Combine legends
-  lines = line1 + line2
-  labels = [l.get_label() for l in lines]
-  ax7.legend(lines, labels, loc='upper right')
-
-  plt.tight_layout()
-  plt.show()
 
 def plot_nullclines(Exc_null_rE, Exc_null_rI, Inh_null_rE, Inh_null_rI):
   plt.figure()
@@ -322,8 +246,10 @@ def plot_nullclines(Exc_null_rE, Exc_null_rI, Inh_null_rE, Inh_null_rI):
   plt.plot(Inh_null_rE, Inh_null_rI, 'r', label='I nullcline')
   plt.xlabel(r'$r_E$')
   plt.ylabel(r'$r_I$')
+  plt.title('Nullclines for E and I Firing Rates')
   plt.legend(loc='best')
   # plt.show() removed to allow all plots to be shown at once
+
 
 def get_E_nullcline(rE, a_E, theta_E, wEE, wEI, ext_E, **other_pars):
   """
@@ -337,6 +263,10 @@ def get_E_nullcline(rE, a_E, theta_E, wEE, wEI, ext_E, **other_pars):
   Returns:
     rI    : values of inhibitory population along the nullcline on the rE
   """
+  # Handle ext_E - use mean if it's an array
+  if hasattr(ext_E, '__len__') and len(ext_E) > 1:
+    ext_E = np.mean(ext_E)
+    
   # calculate rI for E nullclines on rI
   rI = 1 / wEI * (wEE * rE - F_inv(rE, a_E, theta_E) + ext_E)
 
@@ -355,6 +285,10 @@ def get_I_nullcline(rI, a_I, theta_I, wIE, wII, ext_I, **other_pars):
   Returns:
     rE    : values of the excitatory population along the nullcline on the rI
   """
+  # Handle ext_I - use mean if it's an array
+  if hasattr(ext_I, '__len__') and len(ext_I) > 1:
+    ext_I = np.mean(ext_I)
+    
   # calculate rE for I nullclines on rI
   rE = 1 / wIE * (wII * rI + F_inv(rI, a_I, theta_I) - ext_I)
 
@@ -400,6 +334,12 @@ def EIderivs(rE, rI,
              tau_I, a_I, theta_I, wIE, wII, ext_I,
              **other_pars):
   """Time derivatives for E/I variables (dE/dt, dI/dt)."""
+
+  # Handle ext_E and ext_I - use mean if they're arrays
+  if hasattr(ext_E, '__len__') and len(ext_E) > 1:
+    ext_E = np.mean(ext_E)
+  if hasattr(ext_I, '__len__') and len(ext_I) > 1:
+    ext_I = np.mean(ext_I)
 
   # Compute the derivative of rE
   drEdt = (-rE + F(wEE * rE - wEI * rI + ext_E, a_E, theta_E)) / tau_E
@@ -447,6 +387,7 @@ def plot_complete_analysis(pars):
 
   plt.legend(loc=[1.02, 0.57], handlelength=1)
   plt.show()
+
 
 def my_plot_trajectories(pars, dx, n, mylabel):
   """
@@ -517,7 +458,15 @@ def my_fp(pars, rE_init, rI_init):
   tau_I, a_I, theta_I = pars['tau_I'], pars['a_I'], pars['theta_I']
   wEE, wEI = pars['wEE'], pars['wEI']
   wIE, wII = pars['wIE'], pars['wII']
-  ext_E, ext_I = pars['ext_E'], pars['ext_I']
+  
+  # Handle ext_E and ext_I - use mean if they're arrays
+  ext_E = pars['ext_E']
+  ext_I = pars['ext_I']
+  
+  if hasattr(ext_E, '__len__') and len(ext_E) > 1:
+    ext_E = np.mean(ext_E)
+  if hasattr(ext_I, '__len__') and len(ext_I) > 1:
+    ext_I = np.mean(ext_I)
 
   # define the right hand of wilson-cowan equations
   def my_WCr(x):
@@ -575,6 +524,7 @@ def find_multiple_fixed_points(pars, initial_conditions=None):
   
   return fixed_points
 
+
 def check_fp(pars, x_fp, mytol=1e-6):
   """
   Verify (drE/dt)^2 + (drI/dt)^2< mytol
@@ -600,6 +550,12 @@ def get_eig_Jacobian(fp,
   rE, rI = fp
   J = np.zeros((2, 2))
 
+  # Handle ext_E and ext_I - use mean if they're arrays
+  if hasattr(ext_E, '__len__') and len(ext_E) > 1:
+    ext_E = np.mean(ext_E)
+  if hasattr(ext_I, '__len__') and len(ext_I) > 1:
+    ext_I = np.mean(ext_I)
+
   # Compute the four elements of the Jacobian matrix
   J[0, 0] = (-1 + wEE * dF(wEE * rE - wEI * rI + ext_E,
                            a_E, theta_E)) / tau_E
@@ -616,6 +572,7 @@ def get_eig_Jacobian(fp,
   # Compute and return the eigenvalues
   evals = np.linalg.eig(J)[0]
   return evals
+
 
 def plot_bifurcation_diagram_multiple_fps(parameter_values, all_fixed_points, all_stabilities, parameter_name='wEE'):
   """

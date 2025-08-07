@@ -25,11 +25,14 @@ def main(args):
     pars['is_acetylcholine'] = args.is_acetylcholine
     pars['is_theta_modulation'] = args.is_theta_modulation
     pars['is_DG_input'] = args.is_DG_input
+    pars['T'] = args.time
 
     # add a constant noisy external input to pars
     timesteps = int(pars['T'] / pars['dt'])
-    pars['ext_E'] = [0.8] * timesteps + np.random.normal(0, 0.05, timesteps)
-    pars['ext_I'] = [0] * timesteps + np.random.normal(0, 0.05, timesteps)
+    
+    # add noise to external inputs
+    pars['ext_E'] = [args.ext_E] * timesteps + np.random.normal(0, 0.05, timesteps)
+    pars['ext_I'] = [args.ext_I] * timesteps + np.random.normal(0, 0.05, timesteps)
     
     if region == 'ca3':
         wc = CA3_WilsonCowan(**pars)
@@ -43,7 +46,7 @@ def main(args):
     rE2_ca3, rI2_ca3, _, _ = wc.simulate(rE_init=0.0, rI_init=0.0)
 
     # Create the test plot without showing it
-    my_test_plot(pars['range_t'], rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3)
+    my_test_plot(pars['range_t'], rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3, region)
 
     # Set initial conditions
     rE_init = 0.32
@@ -61,13 +64,14 @@ def main(args):
         print(f"\nPlotting bifurcation diagram for {len(parameter_values_list)} parameter values...")
         plot_bifurcation_diagram_multiple_fps(parameter_values_list, all_fixed_points, all_stabilities, parameter_name)
 
-    # plot nullclines
+    # plot nullclines for choice of parameters
     Exc_null_rE = np.linspace(-0.01, 0.96, timesteps)
     Inh_null_rI = np.linspace(-0.01, 0.96, timesteps)
 
     Exc_null_rI = get_E_nullcline(Exc_null_rE, **pars)
     Inh_null_rE = get_I_nullcline(Inh_null_rI, **pars)
     plot_nullclines(Exc_null_rE, Exc_null_rI, Inh_null_rE, Inh_null_rI)
+    plt.show()
     
 
 def vary_parameter_and_plot(pars, parameter_name, parameter_values, rE_init, rI_init, model_type='ca3'):
@@ -226,6 +230,11 @@ if __name__ == "__main__":
     
     parser.add_argument('--ic_E', type=float, required=False, default=0.32, help='Specify initial condition for excitatory rate')
     parser.add_argument('--ic_I', type=float, required=False, default=0.15, help='Specify initial condition for inhibitory rate')
+
+    parser.add_argument('--ext_E', type=float, required=False, default=0.5, help='Specify external input to excitatory population')
+    parser.add_argument('--ext_I', type=float, required=False, default=0.5, help='Specify external input to inhibitory population')
+
+    parser.add_argument('--time', type=int, required=False, default=1000, help='Specify number of ms to simulate')
 
     args = parser.parse_args()
 

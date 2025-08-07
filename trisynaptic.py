@@ -147,11 +147,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     main(args.theta_osc)
-
-
-"""
-Scratchpad
-
-- add acetylcholine to circuit (can release in all regions or individual regions)
-
-"""
