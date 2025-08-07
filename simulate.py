@@ -42,7 +42,7 @@ def main(args):
         wc = DG_WilsonCowan(**pars)
 
     # Simulate CA3 model with two initial conditions (one pair is user-specified, the other is 0)
-    rE1_ca3, rI1_ca3, _, _ = wc.simulate(rE_init=args.ic_E, rI_init=args.ic_I)
+    rE1_ca3, rI1_ca3, _, _ = wc.simulate(rE_init=args.ic_rE, rI_init=args.ic_rI)
     rE2_ca3, rI2_ca3, _, _ = wc.simulate(rE_init=0.0, rI_init=0.0)
 
     # Create the test plot without showing it
@@ -228,13 +228,15 @@ if __name__ == "__main__":
     parser.add_argument('--is_theta_modulation', action='store_true', help='Include theta modulation')
     parser.add_argument('--is_adaptation', action='store_true', help='Include adaptation')
     
-    parser.add_argument('--ic_E', type=float, required=False, default=0.32, help='Specify initial condition for excitatory rate')
-    parser.add_argument('--ic_I', type=float, required=False, default=0.15, help='Specify initial condition for inhibitory rate')
+    parser.add_argument('--ic_rE', type=float, required=False, default=0.32, help='Specify initial condition for excitatory rate')
+    parser.add_argument('--ic_rI', type=float, required=False, default=0.15, help='Specify initial condition for inhibitory rate')
 
     parser.add_argument('--ext_E', type=float, required=False, default=0.5, help='Specify external input to excitatory population')
     parser.add_argument('--ext_I', type=float, required=False, default=0.5, help='Specify external input to inhibitory population')
 
     parser.add_argument('--time', type=int, required=False, default=1000, help='Specify number of ms to simulate')
+
+    parser.add_argument('--param', type=str, required=False, default='wEE', choices=['wEE', 'wIE', 'wII', 'wEI', 'a_E', 'theta_E', 'a_I', 'theta_I'], help='Specify parameter to vary')
 
     args = parser.parse_args()
 

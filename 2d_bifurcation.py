@@ -343,8 +343,8 @@ def analyze_parameter_coexpression(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Bifurcation Analysis')
     parser.add_argument('--region', type=str, required=True, choices=['ca3', 'ca1', 'dg'], help='Specify region to analyze')
-    parser.add_argument('--param1', type=str, required=True, choices=['wEE', 'wIE', 'wII', 'wEI', 'a_E', 'theta_E'], default='wEE', help='Specify first parameter')
-    parser.add_argument('--param2', type=str, required=True, choices=['wEE', 'wIE', 'wII', 'wEI', 'a_E', 'theta_E'], default='wIE', help='Specify second parameter')
+    parser.add_argument('--param1', type=str, required=True, choices=['wEE', 'wIE', 'wII', 'wEI', 'a_E', 'theta_E', 'a_I', 'theta_I'], default='wEE', help='Specify first parameter')
+    parser.add_argument('--param2', type=str, required=True, choices=['wEE', 'wIE', 'wII', 'wEI', 'a_E', 'theta_E', 'a_I', 'theta_I'], default='wIE', help='Specify second parameter')
 
     # Optional parameters
     parser.add_argument('--min1', type=float, required=False, default=2.0, help='Specify min value for the first parameter')

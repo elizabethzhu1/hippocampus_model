@@ -40,8 +40,6 @@ class CA3_WilsonCowan:
         self.range_t = range_t 
         self.T = T
         self.tau_A = tau_A
-        self.ext_E = ext_E
-        self.ext_I = ext_I
 
         # boolean flags for features
         self.is_adaptation = is_adaptation
