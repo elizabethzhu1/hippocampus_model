@@ -1,13 +1,10 @@
-# Wilson Cowan Models of Acetylcholine in the Hippocampus (CA3 / CA1)
+# Neural Mass Model of the Hippocampus
 
 ## Details
 This repository computationally models the regions of the hippocampus.
 <br>
 <br>
-Specifically, it uses Wilson Cowan Equations to model the Dentate Gyrus (DG), the Cornu Ammonis 3 (CA3), and the Cornu Ammonis 1 (CA1).
-<br>
-<br>
-Parameters fare set based on biophysical properites of each region (see the references section below). For CA3, I used the following [paper](https://www.nature.com/articles/nn.3081) by Akam et al. The parameters for CA1 were loosely based off its biophysical similarities / differences relative to CA3.
+Specifically, it uses Wilson Cowan Equations to model the Dentate Gyrus (DG), the Cornu Ammonis 3 (CA3), and the Cornu Ammonis 1 (CA1). Parameters were loosely set based on biophysical properites of each region (see References). 
 
 ### Wilson-Cowan Update Equations
 To model the change in neuronal firing rates for the excitatory population:
@@ -45,6 +42,8 @@ This script simulates a specified region of the hippocampus (i.e. DG, CA3, CA1).
 
 3. `python3 2d_bifurcation.py --region [dg, ca3, ca1] --param1 --param2 --min1 --max1 --min2 --max2 --ext_E --ext_I` This script plots a 2D Bifurcation analysis of the two given parameters. You can specify a range for each parameter (i.e. `--min1` to `--max1`) to plot the combinations. It classifies fixed points into stable/unstable, oscillatory, saddle. 
 
+## Requirements
+`pip install -r requirements`
 
 ## References
 - [Oscillatory dynamics in the hippocampus support dentate gyrus–CA3 coupling (Akam et al.)](https://www.nature.com/articles/nn.3081)
