@@ -2,6 +2,46 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.optimize as opt
 
+
+def set_dg_parameters(**kwargs):
+  pars = {}
+
+  # Biological: DG granule cells are slower to respond
+  pars['tau_E'] = 3.0    # Slower excitatory dynamics than CA3/CA1
+  pars['tau_I'] = 4.8    # Inhibitory same as CA3
+
+  # Granule cells: low gain (less excitable)
+  pars['a_E'] = 0.8       # Reduced gain to make activation harder
+  pars['a_I'] = 2.5       # Interneurons still sharp
+
+  # Thresholds: Granule cells are hard to activate
+  pars['theta_E'] = 3.5   # Higher threshold for excitatory pop.
+  pars['theta_I'] = 2.8   # Slightly lower for inhibition
+
+  # Weights: No recurrent excitation; strong inhibition
+  pars['wEE'] = 2.0       # Granule cells don’t excite each other
+  pars['wIE'] = 6.0       # Granule cells excite interneurons
+  pars['wEI'] = 8.0      # Inhibition to granule cells is strong
+  pars['wII'] = 5.0       # Some inhibitory recurrence
+
+  pars['tau_A'] = 10      # Not used yet
+
+  # Simulation parameters
+  pars['T'] = 1000.0
+  pars['dt'] = 0.1
+  pars['rE_init'] = 0.2
+  pars['rI_init'] = 0.2
+
+  # External parameters if any
+  for k in kwargs:
+      pars[k] = kwargs[k]
+
+  # Vector of discretized time points [ms]
+  pars['range_t'] = np.arange(0, pars['T'], pars['dt'])
+
+  return pars
+
+
 def set_ca3_parameters(**kwargs):
   pars = {}
 
@@ -21,10 +61,6 @@ def set_ca3_parameters(**kwargs):
   
   pars['wEI'] = 10  # I to E
   pars['wII'] = 10  # I to I
-
-  # External input
-  pars['ext_E'] = 0.3
-  pars['ext_I'] = 0  # interneurons are being locally excited not externally
 
   pars['tau_A'] = 10  # not used for now
 
@@ -64,10 +100,6 @@ def set_ca1_parameters(**kwargs):
   pars['wEI'] = 5   
   pars['wII'] = 5      
   
-  # External input - CA1 receives different input patterns
-  pars['ext_E'] = 0.3
-  pars['ext_I'] = 0    
-  
   pars['tau_A'] = 10
   
   # Simulation parameters
@@ -85,47 +117,6 @@ def set_ca1_parameters(**kwargs):
   
   return pars
 
-def set_dg_parameters(**kwargs):
-  pars = {}
-
-  # Biological: DG granule cells are slower to respond
-  pars['tau_E'] = 3.0    # Slower excitatory dynamics than CA3/CA1
-  pars['tau_I'] = 4.8    # Inhibitory same as CA3
-
-  # Granule cells: low gain (less excitable)
-  pars['a_E'] = 0.8       # Reduced gain to make activation harder
-  pars['a_I'] = 2.5       # Interneurons still sharp
-
-  # Thresholds: Granule cells are hard to activate
-  pars['theta_E'] = 3.5   # Higher threshold for excitatory pop.
-  pars['theta_I'] = 2.8   # Slightly lower for inhibition
-
-  # Weights: No recurrent excitation; strong inhibition
-  pars['wEE'] = 1.0       # Granule cells don’t excite each other
-  pars['wIE'] = 8.0       # Granule cells excite interneurons
-  pars['wEI'] = 10.0      # Inhibition to granule cells is strong
-  pars['wII'] = 6.0       # Some inhibitory recurrence
-
-  # External input: usually from EC (theta-modulated)
-  pars['ext_E'] = 0.3     # Will typically be overwritten with EC input
-  pars['ext_I'] = 0       # Feedforward input typically stronger (EC → I)
-
-  pars['tau_A'] = 10      # Not used yet
-
-  # Simulation parameters
-  pars['T'] = 1000.0
-  pars['dt'] = 0.1
-  pars['rE_init'] = 0.2
-  pars['rI_init'] = 0.2
-
-  # External parameters if any
-  for k in kwargs:
-      pars[k] = kwargs[k]
-
-  # Vector of discretized time points [ms]
-  pars['range_t'] = np.arange(0, pars['T'], pars['dt'])
-
-  return pars
 
 def F(x, a, theta):
   """

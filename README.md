@@ -33,3 +33,6 @@ This script solves the Wilson Cowan differential equations using Euler's method 
 
 2. `python3 ca3_to_ca1.py --dg_input_ca3 --ach_ca3 --adaptation_ca3 --ach_ca1 --adaptation_ca1`
 This script simulates the effects of CA3 on the CA1 region of the hippocampus. CA3 and CA1 are each represented by a Wilson-Cowan Model, each with their own custom paramters. Setting the acetylcholine flag simulates a release in both regions.
+
+3. `python3 trisynaptic.py --theta_osc`
+This script runs the 

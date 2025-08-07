@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from helpers import my_test_plot, plot_nullclines, set_ca3_parameters, get_E_nullcline, get_I_nullcline, plot_bifurcation_diagram_multiple_fps, find_multiple_fixed_points, get_eig_Jacobian
+from helpers import my_test_plot, plot_nullclines, set_ca3_parameters, get_E_nullcline, get_I_nullcline, plot_bifurcation_diagram_multiple_fps, find_multiple_fixed_points, get_eig_Jacobian, set_ca1_parameters, set_dg_parameters
+from models.dg import DG_WilsonCowan
 from models.ca3 import CA3_WilsonCowan
 from models.ca1 import CA1_WilsonCowan
 import argparse
@@ -8,15 +9,38 @@ import argparse
 
 def main(args):
 
-    print("=== CA3-Specific Wilson-Cowan Model ===")
-    
-    pars = set_ca3_parameters()
-    pars.update(args.__dict__)
-    wc_ca3 = CA3_WilsonCowan(**pars)
+    region = args.region
 
-    # Simulate CA3 model
-    rE1_ca3, rI1_ca3, _, _ = wc_ca3.simulate(rE_init=0.32, rI_init=0.15)
-    rE2_ca3, rI2_ca3, _, _ = wc_ca3.simulate(rE_init=0.33, rI_init=0.15)
+    print(f"=== {region} Wilson-Cowan Model ===")
+    
+    if region == 'ca3':
+        pars = set_ca3_parameters()
+    elif region == 'ca1':
+        pars = set_ca1_parameters()
+    elif region == 'dg':
+        pars = set_dg_parameters()
+
+    # add boolean arguments to pars
+    pars['is_adaptation'] = args.is_adaptation
+    pars['is_acetylcholine'] = args.is_acetylcholine
+    pars['is_theta_modulation'] = args.is_theta_modulation
+    pars['is_DG_input'] = args.is_DG_input
+
+    # add a constant noisy external input to pars
+    timesteps = int(pars['T'] / pars['dt'])
+    pars['ext_E'] = [0.8] * timesteps + np.random.normal(0, 0.05, timesteps)
+    pars['ext_I'] = [0] * timesteps + np.random.normal(0, 0.05, timesteps)
+    
+    if region == 'ca3':
+        wc = CA3_WilsonCowan(**pars)
+    elif region == 'ca1':
+        wc = CA1_WilsonCowan(**pars)
+    elif region == 'dg':
+        wc = DG_WilsonCowan(**pars)
+
+    # Simulate CA3 model with two initial conditions (one pair is user-specified, the other is 0)
+    rE1_ca3, rI1_ca3, _, _ = wc.simulate(rE_init=args.ic_E, rI_init=args.ic_I)
+    rE2_ca3, rI2_ca3, _, _ = wc.simulate(rE_init=0.0, rI_init=0.0)
 
     # Create the test plot without showing it
     my_test_plot(pars['range_t'], rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3)
@@ -38,8 +62,8 @@ def main(args):
         plot_bifurcation_diagram_multiple_fps(parameter_values_list, all_fixed_points, all_stabilities, parameter_name)
 
     # plot nullclines
-    Exc_null_rE = np.linspace(-0.01, 0.96, 100)
-    Inh_null_rI = np.linspace(-0.01, 0.96, 100)
+    Exc_null_rE = np.linspace(-0.01, 0.96, timesteps)
+    Inh_null_rI = np.linspace(-0.01, 0.96, timesteps)
 
     Exc_null_rI = get_E_nullcline(Exc_null_rE, **pars)
     Inh_null_rE = get_I_nullcline(Inh_null_rI, **pars)
@@ -192,11 +216,16 @@ def vary_multiple_parameters_and_plot(pars, param_dict, rE_init, rI_init, model_
 if __name__ == "__main__":
 
     # Introduce arguments
-    parser = argparse.ArgumentParser(description='Simulate the Wilson-Cowan model')
+    parser = argparse.ArgumentParser(description='Simulate a region of the hippocampus with a Wilson-Cowan model')
+    parser.add_argument('--region', choices=['ca3', 'ca1', 'dg'], default='ca3', help='Region to simulate')
+    
     parser.add_argument('--is_DG_input', action='store_true', help='Include DG input')
     parser.add_argument('--is_acetylcholine', action='store_true', help='Include ACh modulation')
     parser.add_argument('--is_theta_modulation', action='store_true', help='Include theta modulation')
     parser.add_argument('--is_adaptation', action='store_true', help='Include adaptation')
+    
+    parser.add_argument('--ic_E', type=float, required=False, default=0.32, help='Specify initial condition for excitatory rate')
+    parser.add_argument('--ic_I', type=float, required=False, default=0.15, help='Specify initial condition for inhibitory rate')
 
     args = parser.parse_args()
 

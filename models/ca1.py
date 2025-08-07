@@ -23,7 +23,7 @@ Run simulations with different initial conditions (rE_init, rI_init)
 """
 
 class CA1_WilsonCowan:
-    def __init__(self, wEE, wEI, wIE, wII, tau_E, tau_I, a_E, a_I, theta_E, theta_I, rE_init, rI_init, dt, range_t, ext_E, ext_I, T, tau_A, is_adaptation=False, is_acetylcholine=False):
+    def __init__(self, wEE, wEI, wIE, wII, tau_E, tau_I, a_E, a_I, theta_E, theta_I, rE_init, rI_init, dt, range_t, T, tau_A, ext_E, ext_I, is_adaptation=False, is_acetylcholine=False):
         self.wEE = wEE 
         self.wEI = wEI
         self.wIE = wIE
@@ -36,12 +36,12 @@ class CA1_WilsonCowan:
         self.theta_I = theta_I
         self.rE_init = rE_init
         self.rI_init = rI_init
-        self.ext_E = ext_E
-        self.ext_I = ext_I
         self.dt = dt
         self.range_t = range_t  # discrete time points
         self.T = T
         self.tau_A = tau_A
+        self.ext_E = ext_E
+        self.ext_I = ext_I
 
         # boolean flags for features
         self.is_adaptation = is_adaptation
