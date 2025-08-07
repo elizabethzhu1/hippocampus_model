@@ -4,7 +4,7 @@
 This repository computationally models the regions of the hippocampus.
 <br>
 <br>
-Specifically, it uses Wilson Cowan Equations (Wilson and Cowan, 1972)[https://pubmed.ncbi.nlm.nih.gov/4332108/] to model properties of populations of neurons in the Dentate Gyrus (DG), the Cornu Ammonis 3 (CA3), and the Cornu Ammonis 1 (CA1). Parameters were loosely set based on biophysical properties of each region (see References). 
+Specifically, it uses Wilson Cowan Equations [Wilson and Cowan, 1972](https://pubmed.ncbi.nlm.nih.gov/4332108/) to model properties of populations of neurons in the Dentate Gyrus (DG), the Cornu Ammonis 3 (CA3), and the Cornu Ammonis 1 (CA1). Parameters were loosely set based on biophysical properties of each region (see References). 
 
 ### Wilson-Cowan Update Equations
 To model the change in neuronal firing rates for the excitatory population:
