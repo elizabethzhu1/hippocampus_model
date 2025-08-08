@@ -1,6 +1,6 @@
 # Neural Mass Model of the Hippocampus
 
-This repository computationally models the regions of the hippocampus.
+This repository contains a computational model of the hippocampal trisynaptic circuit (EC -> DG -> CA3 -> CA1).
 <br>
 <br>
 Specifically, it uses [Wilson Cowan Equations](https://pubmed.ncbi.nlm.nih.gov/4332108/) to model properties of populations of neurons in the Dentate Gyrus (DG), the Cornu Ammonis 3 (CA3), and the Cornu Ammonis 1 (CA1). Model parameters were loosely set based on biophysical properties of each region and are adaptable. 
@@ -62,3 +62,6 @@ This script plots a 2D Bifurcation analysis with trajectories of the two given p
 ### Trisynaptic Circuit Simulation
 `python3 2d_bifurcation.py --param1 wEE --param2 a_E --min1 0 --max1 15 --min2 0 --max2 15  --region ca3`
 ![2D Bifurcation](/sample_plots/bifurcation.png)
+
+### Documentation
+[Project Notes](https://www.notion.so/elizabethzhu/Models-of-Acetylcholine-in-the-Hippocampus-2258fb7162d1802298f1f894bb8f8750?source=copy_link)
