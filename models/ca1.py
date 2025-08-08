@@ -113,8 +113,8 @@ class CA1_WilsonCowan:
 
             if self.is_acetylcholine:
                 # modulate wEE (decrease) + a_E (increase)
-                drE = dt / tau_E * (-rE[k] + F(self.ACh_modulation_wEE(wEE, k) * rE[k] - wEI * rI[k] + ext_E[k], a_E, theta_E))
-
+                drE = dt / tau_E * (-rE[k] + F(self.ACh_modulation_wEE(wEE, k) * rE[k] - wEI * rI[k] + ext_E[k], self.ACh_modulation_a_E(a_E, k), theta_E))
+            
             # Add noise into the system
             noise_E = np.random.normal(0, 0.001)
             noise_I = np.random.normal(0, 0.001)
@@ -152,12 +152,11 @@ class CA1_WilsonCowan:
 
 
     def ACh_func(self, t):
-        # ACh function that starts low, ramps up quickly and stays high
-        t0 = 18000  # Time ramp begins
-        k = 0.0002  # Steepness of how quickly ACh level ramps up
-
+        # ACh function that starts low, ramps up quickly and stays high (sigmoid)
+        t0 = 5000  # Time at which ramp begins
+        k = 0.001  # Steepness of the ramp
         return 0 + 0.8 / (1 + np.exp(-k * (t - t0)))  # Sigmoid from 0.1 to 0.9
-
+    
 
     def plot_activity_with_ach(self, rE, rI, title="CA3 Activity with ACh Modulation"):
         """

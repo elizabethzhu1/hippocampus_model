@@ -19,7 +19,7 @@ def main(args):
 
     # pass in EC input to DG
     dg_pars['ext_E'], dg_pars['ext_I'] = entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=args.theta_osc)
-    dg_pars['is_acetylcholine'] = False
+    dg_pars['is_acetylcholine'] = args.ach_dg
     
     dg = DG_WilsonCowan(**dg_pars)
 
@@ -63,8 +63,20 @@ def main(args):
     print("EXCITATORY: ", rE_ca1)
     print("INHIBITORY: ", rI_ca1)
 
+    # plot activity with ACh
+    if args.ach_dg:
+        dg.plot_activity_with_ach(rE_dg, rI_dg, title="DG Activity with ACh Modulation")
+        ca3.plot_activity_with_ach(rE_ca3, rI_ca3, title="CA3 Activity with ACh Modulation")
+        ca1.plot_activity_with_ach(rE_ca1, rI_ca1, title="CA1 Activity with ACh Modulation")
+
     # plot rate results
-    plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, args.theta_osc)
+    if args.ach_dg:
+        ach_trace = dg.ACh_func(np.arange(0, dg_pars['T'], dg_pars['dt']))
+    else:
+        # no ACh added
+        ach_trace = [0] * len(rE_dg)
+
+    plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, args.theta_osc, ach_trace)
 
 
 def entorhinal_inputs(T, dt, theta_oscillation=False):
@@ -86,15 +98,20 @@ def entorhinal_inputs(T, dt, theta_oscillation=False):
     return ext_E, ext_I
 
 
-def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc):
+def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc, ach_dg):
     # Create time array for plotting
     time_array = np.arange(0, dg_pars['T'], dg_pars['dt'])
     
     # Plot results with proper time axis
-    plt.figure(figsize=(15, 10))
+    if ach_dg is not None:
+        plt.figure(figsize=(15, 12)) # Make figure taller to accommodate ACh plot
+        n_plots = 5
+    else:
+        plt.figure(figsize=(15, 10))
+        n_plots = 4
     
     # Plot 1: Excitatory rates over time
-    plt.subplot(2, 2, 1)
+    plt.subplot(3, 2, 1)
     plt.plot(time_array, rE_dg, label='DG', linewidth=2)
     plt.plot(time_array, rE_ca3, label='CA3', linewidth=2)
     plt.plot(time_array, rE_ca1, label='CA1', linewidth=2)
@@ -106,7 +123,7 @@ def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc)
     plt.grid(True, alpha=0.3)
     
     # Plot 2: Theta input to DG
-    plt.subplot(2, 2, 2)
+    plt.subplot(3, 2, 2)
     ec_input_e, ec_input_i = entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=theta_osc)
     plt.plot(time_array, ec_input_e, label='EC → E', linewidth=2, color='blue')
     plt.plot(time_array, ec_input_i, label='EC → I', linewidth=2, color='red')
@@ -118,7 +135,7 @@ def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc)
     plt.grid(True, alpha=0.3)
     
     # Plot 3: All rates (E and I) for each region
-    plt.subplot(2, 2, 3)
+    plt.subplot(3, 2, 3)
     plt.plot(time_array, rE_dg, label='DG E', linewidth=2)
     plt.plot(time_array, rI_dg, label='DG I', linewidth=2, linestyle='--')
     plt.ylim(0, 1)
@@ -129,7 +146,7 @@ def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc)
     plt.grid(True, alpha=0.3)
     
     # Plot 4: CA3 and CA1 comparison
-    plt.subplot(2, 2, 4)
+    plt.subplot(3, 2, 4)
     plt.plot(time_array, rE_ca3, label='CA3 E', linewidth=2, color='green')
     plt.plot(time_array, rI_ca3, label='CA3 I', linewidth=2, linestyle='--', color='red')
     plt.plot(time_array, rE_ca1, label='CA1 E', linewidth=2, color='blue')
@@ -140,8 +157,18 @@ def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc)
     plt.title('CA3 and CA1 Activity')
     plt.legend()
     plt.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
+
+    # Plot 5: Acetylcholine in DG (if added)
+    if ach_dg is not None:
+        plt.subplot(3, 2, 5)  # Changed from 2,2,5 to 3,2,5
+        plt.plot(time_array, ach_dg, label='DG ACh', linewidth=2, color='purple')
+        plt.ylim(0, 1)
+        plt.xlabel('Time (ms)')
+        plt.ylabel('Acetylcholine Level')
+        plt.title('Acetylcholine in DG')
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+
     plt.show()
     
 
@@ -150,6 +177,7 @@ if __name__ == "__main__":
     # take arguments
     parser = argparse.ArgumentParser(description='Simulate the trisynaptic circuit of the hippocampus.')
     parser.add_argument('--theta_osc', action='store_true', help='Use theta oscillation input')
+    parser.add_argument('--ach_dg', action='store_true', help='Add acetylcholine to DG')
     args = parser.parse_args()
 
     main(args)
