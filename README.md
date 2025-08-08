@@ -42,6 +42,7 @@ This script simulates a specified region of the hippocampus (i.e. DG, CA3, CA1).
 #### `python3 2d_bifurcation.py --region [dg, ca3, ca1] --param1 ['wEE', 'wIE', 'wII', 'wEI', 'a_E', 'theta_E', 'a_I', 'theta_I'] --param2 [same as param1] --min1 --max1 --min2 --max2 --ext_E --ext_I` 
 This script plots a 2D Bifurcation analysis of two given parameters with sample trajectories.
 
+`--region` Specify the region to simulate (dg, ca3, ca1). <br>
 `--param1` and `--param2` Specify the two parameters whose combinations you want to analyze. <br>
 `--min1` and `--max1` and `--min2` and `--max2` Specify the range of values for each parameter you want analyzed. <br>
 `--ext_I` and `--ext_E` Specify the external input to the inhibitory and excitatory populations. <br>
