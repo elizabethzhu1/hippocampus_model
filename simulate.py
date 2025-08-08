@@ -231,8 +231,8 @@ if __name__ == "__main__":
     parser.add_argument('--ic_rE', type=float, required=False, default=0.32, help='Specify initial condition for excitatory rate')
     parser.add_argument('--ic_rI', type=float, required=False, default=0.15, help='Specify initial condition for inhibitory rate')
 
-    parser.add_argument('--ext_E', type=float, required=False, default=0.5, help='Specify external input to excitatory population')
-    parser.add_argument('--ext_I', type=float, required=False, default=0.5, help='Specify external input to inhibitory population')
+    parser.add_argument('--ext_E', type=float, required=False, default=1.0, help='Specify external input to excitatory population')
+    parser.add_argument('--ext_I', type=float, required=False, default=1.0, help='Specify external input to inhibitory population')
 
     parser.add_argument('--time', type=int, required=False, default=1000, help='Specify number of ms to simulate')
 

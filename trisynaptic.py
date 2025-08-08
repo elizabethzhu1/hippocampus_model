@@ -87,7 +87,7 @@ def main(args):
     plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, args.theta_osc, ach_trace)
 
 
-def entorhinal_inputs(T, dt, theta_oscillation=False):
+def entorhinal_inputs(T, dt, theta_oscillation=False, EC_E=2.0, EC_I=2.0):
     """
     Model external input from Entorhinal Cortext (EC) to DG, CA3, and CA1.
     """
@@ -100,8 +100,9 @@ def entorhinal_inputs(T, dt, theta_oscillation=False):
         ext_E = 0.5 * np.sin(2 * np.pi * frequency_ms * timesteps) + 1 + np.random.normal(0, 0.05, len(timesteps))
         ext_I = 0.5 * np.sin(2 * np.pi * frequency_ms * timesteps) + 1 + np.random.normal(0, 0.05, len(timesteps))
     else:
-        ext_E = np.ones(len(timesteps)) + np.random.normal(0, 0.1, len(timesteps))
-        ext_I = np.ones(len(timesteps)) + np.random.normal(0, 0.1, len(timesteps))
+        # parameterized at 2 with noise
+        ext_E = EC_E * np.ones(len(timesteps)) + np.random.normal(0, 0.1, len(timesteps))
+        ext_I = EC_I * np.ones(len(timesteps)) + np.random.normal(0, 0.1, len(timesteps))
 
     return ext_E, ext_I
 
@@ -131,15 +132,18 @@ def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc,
     plt.grid(True, alpha=0.3)
     
 
-    # Plot 2: Theta input to DG
+    # Plot 2: External input to DG (theta or noise)
     plt.subplot(3, 2, 2)
-    ec_input_e, ec_input_i = entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=theta_osc)
+    ec_input_e, ec_input_i = entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=theta_osc, EC_E=args.EC_E, EC_I=args.EC_I)
     plt.plot(time_array, ec_input_e, label='EC → E', linewidth=2, color='blue')
     plt.plot(time_array, ec_input_i, label='EC → I', linewidth=2, color='red')
     plt.ylim(0, 3)
     plt.xlabel('Time (ms)')
     plt.ylabel('Input Amplitude')
-    plt.title('Theta Oscillation Input')
+    if theta_osc:
+        plt.title('Theta Oscillation Input')
+    else:
+        plt.title('Gaussian Noise Input')
     plt.legend()
     plt.grid(True, alpha=0.3)
     
@@ -191,6 +195,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Simulate the trisynaptic circuit of the hippocampus.')
     parser.add_argument('--theta_osc', action='store_true', help='Use theta oscillation input')
     parser.add_argument('--ach_dg', action='store_true', help='Add acetylcholine to DG')
+    parser.add_argument('--EC_E', type=float, required=False, default=2.0, help='Specify external input to excitatory population')
+    parser.add_argument('--EC_I', type=float, required=False, default=2.0, help='Specify external input to inhibitory population')
     args = parser.parse_args()
 
     main(args)

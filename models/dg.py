@@ -196,7 +196,6 @@ class DG_WilsonCowan:
         modulated_input = input * np.sin(2 * np.pi * theta_freq * self.range_t)
 
         return modulated_input
-
     
     def EC_input(self):
         # EC input is a low amplitude, continuous input
@@ -217,3 +216,5 @@ class DG_WilsonCowan:
 
         return ec_input
         
+    def activation_func(self):
+        pass

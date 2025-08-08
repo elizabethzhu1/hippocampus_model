@@ -6,25 +6,26 @@ import scipy.optimize as opt
 def set_dg_parameters(**kwargs):
   pars = {}
 
-  # Biological: DG granule cells are slower to respond
-  pars['tau_E'] = 3.0    # Slower excitatory dynamics than CA3/CA1
-  pars['tau_I'] = 4.8    # Inhibitory same as CA3
+  # Time Constants
+  pars['tau_E'] = 14
+  pars['tau_I'] = 20  
 
-  # Granule cells: low gain (less excitable)
-  pars['a_E'] = 0.8       # Reduced gain to make activation harder
-  pars['a_I'] = 2.5       # Interneurons still sharp
+  # Gain
+  pars['a_E'] = 0.8  # lower gain - less steep sigmoid curve (class 1 excitability)
+  pars['a_I'] = 2.0  # interneurons are more excitable
 
-  # Thresholds: Granule cells are hard to activate
-  pars['theta_E'] = 3.5   # Higher threshold for excitatory pop.
-  pars['theta_I'] = 2.8   # Slightly lower for inhibition
+  # Thresholds
+  pars['theta_E'] = 2.5   
+  pars['theta_I'] = 2.0   # interneurons have lower threshold
 
-  # Weights: No recurrent excitation; strong inhibition
-  pars['wEE'] = 2.0       # Granule cells don’t excite each other
-  pars['wIE'] = 6.0       # Granule cells excite interneurons
-  pars['wEI'] = 8.0      # Inhibition to granule cells is strong
-  pars['wII'] = 5.0       # Some inhibitory recurrence
+  # Weights
+  pars['wEE'] = 1.0       # low recurrency among granule cells
+  pars['wIE'] = 3.0       # some granule cells excite interneurons
+  pars['wEI'] = 8.0       # inhibition to granule cells is strong
+  pars['wII'] = 5.0       # some inhibitory recurrence
 
-  pars['tau_A'] = 10      # Not used yet
+  # Adaptation
+  pars['tau_A'] = 10     
 
   # Simulation parameters
   pars['T'] = 1000.0
@@ -45,24 +46,26 @@ def set_dg_parameters(**kwargs):
 def set_ca3_parameters(**kwargs):
   pars = {}
 
-  # based on CA3 paper
+  # Time Constants
+  pars['tau_E'] = 23.6    # Timescale of the E population [ms]
+  pars['tau_I'] = 18    # Timescale of the I population [ms]
 
-  pars['tau_E'] = 1.8    # Timescale of the E population [ms]
-  pars['tau_I'] = 4.8    # Timescale of the I population [ms]
-
-  pars['a_E'] = 1.0     # Gain of the E population
+  # Gain
+  pars['a_E'] = 1.8    # Gain of the E population (more excitable than DG)
   pars['a_I'] = 2.0    # Gain of the I population
-  
-  pars['theta_E'] = 2.8  # Threshold of the E population
-  pars['theta_I'] = 3.0  # Threshold of the I population
 
-  pars['wEE'] = 10 # E to E -- big bifurcation between 6.8 and 6.9, all else constant
+  # Thresholds
+  pars['theta_E'] = 1.5  # Threshold of the E population
+  pars['theta_I'] = 1.5  # Threshold of the I population
+
+  # Weights
+  pars['wEE'] = 10 # E to E
   pars['wIE'] = 12  # E to I
-  
   pars['wEI'] = 10  # I to E
   pars['wII'] = 10  # I to I
 
-  pars['tau_A'] = 10  # not used for now
+  # Adaptation
+  pars['tau_A'] = 10 
 
   # simulation parameters
   pars['T'] = 1000.        # Total duration of simulation [ms]
@@ -82,24 +85,25 @@ def set_ca3_parameters(**kwargs):
 def set_ca1_parameters(**kwargs):
   pars = {}
   
-  # Time constants - CA1 pyramidal cells have faster dynamics than CA3
-  pars['tau_E'] = 1.6
-  pars['tau_I'] = 4.0
+  # Time Constants
+  pars['tau_E'] = 14
+  pars['tau_I'] = 12
   
-  # Gain parameters
-  pars['a_E'] = 1.0   
-  pars['a_I'] = 2.0   
+  # Gain
+  pars['a_E'] = 1.5    # higher than DG, lower than CA3
+  pars['a_I'] = 2.0    
   
-  # Threshold parameters
-  pars['theta_E'] = 2.8  
-  pars['theta_I'] = 3.0 
+  # Thresholds
+  pars['theta_E'] = 1.8  
+  pars['theta_I'] = 1.5 
   
-  # Connection weights - CA1 has different connectivity patterns
+  # Weights
   pars['wEE'] = 8     
   pars['wIE'] = 8    
   pars['wEI'] = 5   
   pars['wII'] = 5      
   
+  # Adaptation
   pars['tau_A'] = 10
   
   # Simulation parameters
@@ -131,13 +135,10 @@ def F(x, a, theta):
     f     : the population activation response f(x) for input x
   """
 
-  # Clip inputs to avoid overflow in exp (only relevant for fsolve)
-  x_clipped = np.clip(x, -500/a, 500/a + theta)
-  
-  # Calculate activation with clipped inputs
-  f = (1 + np.exp(-a * (x_clipped - theta)))**-1 - (1 + np.exp(a * theta))**-1
-
-  # f = (1 + np.exp(-a)) ** -1
+  # Clip inputs to avoid overflow in exp
+  z = -a * (x - theta)
+  z = np.clip(z, -500, 500)
+  f = (1 + np.exp(z))**-1 - (1 + np.exp(a * theta))**-1
 
   return f
 
@@ -155,7 +156,10 @@ def dF(x, a, theta):
     dFdx  :  Derivative of the population activation function.
   """
 
-  dFdx = a * np.exp(-a * (x - theta)) * (1 + np.exp(-a * (x - theta)))**-2
+  # Clip inputs to avoid overflow in exp
+  z = -a * (x - theta)
+  z = np.clip(z, -500, 500)
+  dFdx = a * np.exp(z) * (1 + np.exp(z))**-2
 
   return dFdx
 
