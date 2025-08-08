@@ -36,8 +36,8 @@ def main(args):
     ca3_wEC_E = 0.5
     ca3_wEC_I = 0.5
 
-    ca3_pars['ext_E'] = ca3_wDG_E * rE_dg + ca3_wEC_E * entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=args.theta_osc, EC_E=args.ec_E, EC_I=args.ec_I)[0]
-    ca3_pars['ext_I'] = ca3_wDG_I * rI_dg + ca3_wEC_I * entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=args.theta_osc, EC_E=args.ec_E, EC_I=args.ec_I)[1]
+    ca3_pars['ext_E'] = ca3_wDG_E * rE_dg + ca3_wEC_E * entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=args.theta_osc, ec_E=args.ec_E, ec_I=args.ec_I)[0]
+    ca3_pars['ext_I'] = ca3_wDG_I * rI_dg + ca3_wEC_I * entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=args.theta_osc, ec_E=args.ec_E, ec_I=args.ec_I)[1]
     ca3_pars['is_acetylcholine'] = args.ach_dg
     
     ca3 = CA3_WilsonCowan(**ca3_pars)
@@ -84,7 +84,7 @@ def main(args):
     plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, args.theta_osc, ach_trace)
 
 
-def entorhinal_inputs(T, dt, theta_oscillation=False, EC_E=2.0, EC_I=2.0):
+def entorhinal_inputs(T, dt, theta_oscillation=False, ec_E=2.0, ec_I=2.0):
     """
     Model external input from Entorhinal Cortext (EC) to DG, CA3, and CA1.
     """
@@ -98,8 +98,8 @@ def entorhinal_inputs(T, dt, theta_oscillation=False, EC_E=2.0, EC_I=2.0):
         ext_I = 0.5 * np.sin(2 * np.pi * frequency_ms * timesteps) + 1 + np.random.normal(0, 0.05, len(timesteps))
     else:
         # parameterized at 2 with noise
-        ext_E = EC_E * np.ones(len(timesteps)) + np.random.normal(0, 0.1, len(timesteps))
-        ext_I = EC_I * np.ones(len(timesteps)) + np.random.normal(0, 0.1, len(timesteps))
+        ext_E = ec_E * np.ones(len(timesteps)) + np.random.normal(0, 0.1, len(timesteps))
+        ext_I = ec_I * np.ones(len(timesteps)) + np.random.normal(0, 0.1, len(timesteps))
 
     return ext_E, ext_I
 
@@ -131,7 +131,7 @@ def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc,
 
     # Plot 2: External input to DG (theta or noise)
     plt.subplot(3, 2, 2)
-    ec_input_e, ec_input_i = entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=theta_osc, EC_E=args.ec_E, EC_I=args.ec_I)
+    ec_input_e, ec_input_i = entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=theta_osc, ec_E=args.ec_E, ec_I=args.ec_I)
     plt.plot(time_array, ec_input_e, label='EC → E', linewidth=2, color='blue')
     plt.plot(time_array, ec_input_i, label='EC → I', linewidth=2, color='red')
     plt.ylim(0, max(ec_input_e.max(), ec_input_i.max()) + 1)

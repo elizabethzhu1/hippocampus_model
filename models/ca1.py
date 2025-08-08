@@ -189,38 +189,8 @@ class CA1_WilsonCowan:
         ax2.grid(True, alpha=0.3)
         
         plt.tight_layout()
-        return fig
-    
+        return fig   
 
-    def theta_modulation(self, input, theta_freq):
-        # modulate external input with theta oscillations
-        modulated_input = input * np.sin(2 * np.pi * theta_freq * self.range_t)
-
-        return modulated_input
-    
-
-    def EC_input(self):
-        # EC input is a low amplitude, continuous input
-        baseline = 0.5
-        Lt = self.range_t.size
-
-        # Create noise for each millisecond, then interpolate to time steps
-        # Calculate number of milliseconds in the simulation
-        num_ms = int(self.T)
-        
-        # Generate noise for each millisecond
-        ms_noise = np.random.normal(0, 0.01, num_ms)
-        ec_input_ms = baseline + ms_noise
-        
-        # Interpolate to match the time step resolution
-        ms_times = np.arange(0, num_ms)
-        step_times = self.range_t
-        
-        # Use linear interpolation to get values at each time step
-        ec_input = np.interp(step_times, ms_times, ec_input_ms)
-
-        return ec_input
-        
 
 """
 ext_E --> wDG_E * ext_DG + wEC_E * ext_EC

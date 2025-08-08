@@ -23,7 +23,7 @@ Run simulations with different initial conditions (rE_init, rI_init)
 """
 
 class CA3_WilsonCowan:
-    def __init__(self, wEE, wEI, wIE, wII, tau_E, tau_I, a_E, a_I, theta_E, theta_I, rE_init, rI_init, dt, range_t, T, tau_A, ext_E, ext_I, is_adaptation=False, is_acetylcholine=False, is_DG_input=False, is_theta_modulation=False):
+    def __init__(self, wEE, wEI, wIE, wII, tau_E, tau_I, a_E, a_I, theta_E, theta_I, rE_init, rI_init, dt, range_t, T, tau_A, ext_E, ext_I, is_adaptation=False, is_acetylcholine=False, is_DG_input=False):
         self.wEE = wEE 
         self.wEI = wEI
         self.wIE = wIE
@@ -46,7 +46,6 @@ class CA3_WilsonCowan:
         # boolean flags for features
         self.is_adaptation = is_adaptation
         self.is_acetylcholine = is_acetylcholine
-        self.is_theta_modulation = is_theta_modulation
         self.is_DG_input = is_DG_input
 
 
@@ -192,12 +191,6 @@ class CA3_WilsonCowan:
         
         plt.tight_layout()
         return fig
-    
-    def theta_modulation(self, input, theta_freq):
-        # Modulate external input with theta oscillations
-        modulated_input = input * np.sin(2 * np.pi * theta_freq * self.range_t)
-
-        return modulated_input
     
     def DG_input(self, baseline=0.1, baseline_noise_std=0.01, peak_amp=1.0, min_ms=100, max_ms=200, min_gap_ms=500):
         """

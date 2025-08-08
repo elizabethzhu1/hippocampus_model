@@ -15,16 +15,15 @@ def main(args):
     
     if region == 'ca3':
         pars = set_ca3_parameters()
+        pars['is_DG_input'] = args.dg_input
     elif region == 'ca1':
         pars = set_ca1_parameters()
     elif region == 'dg':
         pars = set_dg_parameters()
 
     # add boolean arguments to pars
-    pars['is_adaptation'] = args.is_adaptation
-    pars['is_acetylcholine'] = args.is_acetylcholine
-    pars['is_theta_modulation'] = args.is_theta_modulation
-    pars['is_DG_input'] = args.is_DG_input
+    pars['is_adaptation'] = args.adaptation
+    pars['is_acetylcholine'] = args.ach
     pars['T'] = args.time
 
     # add a constant noisy external input to pars
@@ -223,10 +222,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Simulate a region of the hippocampus with a Wilson-Cowan model')
     parser.add_argument('--region', choices=['ca3', 'ca1', 'dg'], default='ca3', help='Region to simulate')
     
-    parser.add_argument('--is_DG_input', action='store_true', help='Include DG input')
-    parser.add_argument('--is_acetylcholine', action='store_true', help='Include ACh modulation')
-    parser.add_argument('--is_theta_modulation', action='store_true', help='Include theta modulation')
-    parser.add_argument('--is_adaptation', action='store_true', help='Include adaptation')
+    parser.add_argument('--dg_input', action='store_true', help='Include DG input')
+    parser.add_argument('--ach', action='store_true', help='Include ACh modulation')
+    parser.add_argument('--adaptation', action='store_true', help='Include adaptation')
     
     parser.add_argument('--ic_rE', type=float, required=False, default=0.32, help='Specify initial condition for excitatory rate')
     parser.add_argument('--ic_rI', type=float, required=False, default=0.15, help='Specify initial condition for inhibitory rate')
