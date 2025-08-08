@@ -20,8 +20,8 @@ def plot_ca3_with_ach():
     wc_ca3_dg = CA3_WilsonCowan(**ca3_pars)
     
     # Simulate both models
-    rE_ca3, rI_ca3, _, _ = wc_ca3.simulate(rE_init=0.32, rI_init=0.15)
-    rE_ca3_dg, rI_ca3_dg, _, _ = wc_ca3_dg.simulate(rE_init=0.32, rI_init=0.15)
+    rE_ca3, rI_ca3 = wc_ca3.simulate(rE_init=0.32, rI_init=0.15)
+    rE_ca3_dg, rI_ca3_dg = wc_ca3_dg.simulate(rE_init=0.32, rI_init=0.15)
     
     # Create figure with 1x2 subplots
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5), sharex=True)

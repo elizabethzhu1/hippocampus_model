@@ -40,6 +40,8 @@ class CA3_WilsonCowan:
         self.range_t = range_t 
         self.T = T
         self.tau_A = tau_A
+        self.ext_E = ext_E
+        self.ext_I = ext_I
 
         # boolean flags for features
         self.is_adaptation = is_adaptation
@@ -82,30 +84,8 @@ class CA3_WilsonCowan:
         a_I = self.a_I
         dt = self.dt
         tau_A = self.tau_A
-
-        # Get DG and EC inputs
-        
-        if self.is_DG_input:
-            # Weights for DG and EC inputs (ext_E and ext_I)
-            wEC_E = 0.3  # weak EC input to pyramidal neurons
-            wDG_E = 0.7  # strong DG input to pyramidal neurons
-            wEC_I = 0.35  # weak EC input to interneurons
-            wDG_I = 1.19  # 1.7x wDG_E (strong DG input to interneurons)
-            
-            # Call the helper functions
-            dg_input = self.DG_input()
-            ec_input = self.EC_input()
-
-            ext_E = wDG_E * dg_input + wEC_E * ec_input
-            ext_I = wDG_I * dg_input + wEC_I * ec_input
-        
-        else:
-            ext_E = self.ext_E * np.ones(Lt)
-            ext_I = self.ext_I * np.ones(Lt)
-
-            # So plotting function doesn't break
-            dg_input = []
-            ec_input = []
+        ext_E = self.ext_E
+        ext_I = self.ext_I
 
         # Initialize adaptation starting rates
         A = np.append(0, np.zeros(Lt - 1))
@@ -149,7 +129,7 @@ class CA3_WilsonCowan:
                 A[k + 1] = A[k] + drA
 
         # return arrays with all the rates over time
-        return rE, rI, dg_input, ec_input
+        return rE, rI
 
     
     def ACh_modulation_wEE(self, wEE, t):
