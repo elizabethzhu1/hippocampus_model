@@ -38,6 +38,7 @@ def main(args):
 
     ca3_pars['ext_E'] = ca3_wDG_E * rE_dg + ca3_wEC_E * entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=args.theta_osc)[0]
     ca3_pars['ext_I'] = ca3_wDG_I * rI_dg + ca3_wEC_I * entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=args.theta_osc)[1]
+    ca3_pars['is_acetylcholine'] = args.ach_dg
     
     ca3 = CA3_WilsonCowan(**ca3_pars)
     rE_ca3, rI_ca3 = ca3.simulate(rE_init=0.2, rI_init=0.1)
@@ -55,6 +56,7 @@ def main(args):
 
     ca1_pars['ext_E'] = ca1_wDG_E * rE_ca3 + ca1_wEC_E * entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=args.theta_osc)[0]
     ca1_pars['ext_I'] = ca1_wDG_I * rI_ca3 + ca1_wEC_I * entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=args.theta_osc)[1]
+    ca1_pars['is_acetylcholine'] = args.ach_dg
     
     ca1 = CA1_WilsonCowan(**ca1_pars)
     rE_ca1, rI_ca1 = ca1.simulate(rE_init=0.2, rI_init=0.1)
@@ -65,13 +67,19 @@ def main(args):
 
     # plot activity with ACh
     if args.ach_dg:
-        dg.plot_activity_with_ach(rE_dg, rI_dg, title="DG Activity with ACh Modulation")
-        ca3.plot_activity_with_ach(rE_ca3, rI_ca3, title="CA3 Activity with ACh Modulation")
-        ca1.plot_activity_with_ach(rE_ca1, rI_ca1, title="CA1 Activity with ACh Modulation")
+        fig = dg.plot_activity_with_ach(rE_dg, rI_dg, title="DG Activity with ACh Modulation")
+        fig.show()
+        fig = ca3.plot_activity_with_ach(rE_ca3, rI_ca3, title="CA3 Activity with ACh Modulation")
+        fig.show()
+        fig = ca1.plot_activity_with_ach(rE_ca1, rI_ca1, title="CA1 Activity with ACh Modulation")
+        fig.show()
 
     # plot rate results
     if args.ach_dg:
-        ach_trace = dg.ACh_func(np.arange(0, dg_pars['T'], dg_pars['dt']))
+        print("ACH")
+        ach_trace = []
+        for t in range(len(rE_dg)):
+            ach_trace.append(dg.ACh_func(t))
     else:
         # no ACh added
         ach_trace = [0] * len(rE_dg)
@@ -98,16 +106,16 @@ def entorhinal_inputs(T, dt, theta_oscillation=False):
     return ext_E, ext_I
 
 
-def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc, ach_dg):
+def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc, ach_trace):
     # Create time array for plotting
     time_array = np.arange(0, dg_pars['T'], dg_pars['dt'])
     
     # Plot results with proper time axis
-    if ach_dg is not None:
-        plt.figure(figsize=(15, 12)) # Make figure taller to accommodate ACh plot
+    if ach_trace is not None:
+        plt.figure(figsize=(10, 10)) # Make figure taller to accommodate ACh plot
         n_plots = 5
     else:
-        plt.figure(figsize=(15, 10))
+        plt.figure(figsize=(10, 8))
         n_plots = 4
     
     # Plot 1: Excitatory rates over time
@@ -122,6 +130,7 @@ def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc,
     plt.legend()
     plt.grid(True, alpha=0.3)
     
+
     # Plot 2: Theta input to DG
     plt.subplot(3, 2, 2)
     ec_input_e, ec_input_i = entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=theta_osc)
@@ -134,6 +143,7 @@ def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc,
     plt.legend()
     plt.grid(True, alpha=0.3)
     
+
     # Plot 3: All rates (E and I) for each region
     plt.subplot(3, 2, 3)
     plt.plot(time_array, rE_dg, label='DG E', linewidth=2)
@@ -145,6 +155,7 @@ def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc,
     plt.legend()
     plt.grid(True, alpha=0.3)
     
+
     # Plot 4: CA3 and CA1 comparison
     plt.subplot(3, 2, 4)
     plt.plot(time_array, rE_ca3, label='CA3 E', linewidth=2, color='green')
@@ -157,11 +168,12 @@ def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc,
     plt.title('CA3 and CA1 Activity')
     plt.legend()
     plt.grid(True, alpha=0.3)
+    
 
     # Plot 5: Acetylcholine in DG (if added)
-    if ach_dg is not None:
+    if ach_trace is not None:
         plt.subplot(3, 2, 5)  # Changed from 2,2,5 to 3,2,5
-        plt.plot(time_array, ach_dg, label='DG ACh', linewidth=2, color='purple')
+        plt.plot(time_array, ach_trace, label='DG ACh', linewidth=2, color='purple')
         plt.ylim(0, 1)
         plt.xlabel('Time (ms)')
         plt.ylabel('Acetylcholine Level')
@@ -169,8 +181,9 @@ def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc,
         plt.legend()
         plt.grid(True, alpha=0.3)
 
-    plt.show()
+    plt.tight_layout(h_pad=1.0, w_pad=1.0)
     
+    plt.show()
 
 if __name__ == "__main__":
 

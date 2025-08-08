@@ -42,8 +42,8 @@ def main(args):
         wc = DG_WilsonCowan(**pars)
 
     # Simulate CA3 model with two initial conditions (one pair is user-specified, the other is 0)
-    rE1_ca3, rI1_ca3, _, _ = wc.simulate(rE_init=args.ic_rE, rI_init=args.ic_rI)
-    rE2_ca3, rI2_ca3, _, _ = wc.simulate(rE_init=0.0, rI_init=0.0)
+    rE1_ca3, rI1_ca3 = wc.simulate(rE_init=args.ic_rE, rI_init=args.ic_rI)
+    rE2_ca3, rI2_ca3 = wc.simulate(rE_init=0.0, rI_init=0.0)
 
     # Create the test plot without showing it
     my_test_plot(pars['range_t'], rE1_ca3, rI1_ca3, rE2_ca3, rI2_ca3, region)
@@ -88,7 +88,7 @@ def vary_parameter_and_plot(pars, parameter_name, parameter_values, rE_init, rI_
         for value in parameter_values:
             pars[parameter_name] = value
             wc = CA3_WilsonCowan(**pars)
-            rE_std, rI_std, _, _ = wc.simulate(rE_init=rE_init, rI_init=rI_init)
+            rE_std, rI_std = wc.simulate(rE_init=rE_init, rI_init=rI_init)
             y_min = min(y_min, min(rE_std), min(rI_std))
             y_max = max(y_max, max(rE_std), max(rI_std))
 
@@ -106,11 +106,11 @@ def vary_parameter_and_plot(pars, parameter_name, parameter_values, rE_init, rI_
             pars[parameter_name] = value
             
             if model_type == 'ca3':
-                wc_standard = CA3_WilsonCowan(**pars)
+                wc = CA3_WilsonCowan(**pars)
             elif model_type == 'ca1':
-                wc_standard = CA1_WilsonCowan(**pars) 
+                wc = CA1_WilsonCowan(**pars) 
             
-            rE_std, rI_std, _, _ = wc_standard.simulate(rE_init=rE_init, rI_init=rI_init)
+            rE_std, rI_std = wc.simulate(rE_init=rE_init, rI_init=rI_init)
             
             axes[i].plot(pars['range_t'], rE_std, 'b', label='E population')
             axes[i].plot(pars['range_t'], rI_std, 'r', label='I population')
@@ -195,7 +195,7 @@ def vary_multiple_parameters_and_plot(pars, param_dict, rE_init, rI_init, model_
             elif model_type == 'ca1':
                 wc = CA1_WilsonCowan(**temp_pars) 
         
-            rE, rI, _, _ = wc.simulate(rE_init=rE_init, rI_init=rI_init)
+            rE, rI = wc.simulate(rE_init=rE_init, rI_init=rI_init)
             
             axes[i,j].plot(temp_pars['range_t'], rE, 'b', label='E')
             axes[i,j].plot(temp_pars['range_t'], rI, 'r', label='I')
