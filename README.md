@@ -40,7 +40,7 @@ This script simulates a specified region of the hippocampus (i.e. DG, CA3, CA1).
 `--ic_rI` [optional] Specify a param to vary (can edit range within code) (default = wEE). <br>
 
 #### `python3 2d_bifurcation.py --region [dg, ca3, ca1] --param1 --param2 --min1 --max1 --min2 --max2 --ext_E --ext_I` 
-This script plots a 2D Bifurcation analysis with trajectories of the two given parameters and parameter ranges.
+This script plots a 2D Bifurcation analysis of two given parameters with sample trajectories.
 
 `--param1` and `--param2` Specify the two parameters whose combinations you want to analyze. <br>
 `--min1` and `--max1` and `--min2` and `--max2` Specify the range of values for each parameter you want analyzed. <br>
@@ -49,17 +49,17 @@ This script plots a 2D Bifurcation analysis with trajectories of the two given p
 ## Requirements
 `pip install -r requirements`
 
-## Sample Plots
-### Trisynaptic Circuit Simulation
-`python3 trisynaptic.py --theta_osc --ach`
+## Sample Result Plots
+### Trisynaptic Circuit Simulation with Acetylcholine + Theta Oscillations
+`python3 trisynaptic.py --theta_osc --ach` <br>
 ![Trisynaptic Circuit](/sample_plots/trisynaptic_plot.png)
 
-### Simulating CA3
-`python3 simulate.py --region ca3`
+### CA3 Simulation 
+`python3 simulate.py --region ca3` <br>
 ![CA3 Firing Rates](/sample_plots/ca3_frs.png)
 
-### Trisynaptic Circuit Simulation
-`python3 2d_bifurcation.py --param1 wEE --param2 a_E --min1 0 --max1 15 --min2 0 --max2 15  --region ca3`
+### 2D Bifurcation Analysis of wEE (recurrent excitation) and a_E (gain)
+`python3 2d_bifurcation.py --param1 wEE --param2 a_E --min1 0 --max1 15 --min2 0 --max2 15  --region ca3` <br>
 ![2D Bifurcation](/sample_plots/bifurcation.png)
 
 ### Documentation
