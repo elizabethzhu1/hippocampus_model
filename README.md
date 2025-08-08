@@ -27,20 +27,19 @@ This script simulates the entire trisynaptic circuit of the hippocampus. It cons
 `--ec_E` [optional] Control the magnitude of the external input (Gaussian noise) from EC to the excitatory population if not configuring for theta oscillations. <br>
 `--ec_I` [optional] Control the magnitude of the external input (Gaussian noise) from EC to the inhibitory population if not configuring for theta oscillations. <br>
 
-`python3 simulate.py --region [dg, ca3, ca1] --is_DG_input --is_acetylcholine --ext_E --ext_I --ic_rE --ic_rI`
+#### `python3 simulate.py --region [dg, ca3, ca1] --is_DG_input --is_acetylcholine --ext_E --ext_I --ic_rE --ic_rI`
 This script simulates a specified region of the hippocampus (i.e. DG, CA3, CA1). It solves the Wilson Cowan differential equations using Euler's method over discrete time steps. It generates several result plots: mean firing rates over time, mean firing rates across different parameter values, nullclines, bifurcations, and prints out the system's fixed points.
 
 `--region` Specify the region to simulate (dg, ca3, ca1). <br>
 `--ach` (boolean) [optional] Add acetylcholine to the region. It models a sigmoidal change in ACh as a function of time. <br>
 `--dg_input` (boolean) [optional] Simulate an external input from the dentate gyrus (DG) (used for CA3 simulations), which is modeled as infrequent high amplitude pulses. Setting this flag also by default simulates an external input from the entorhinal cortex (EC) to CA3 which is modeled as a continuous low-amplitude noisy input. <br>
-
 `--ext_E` [optional] Specify the external input to the excitatory population (default = 0.5). <br>
 `--ext_I` [optional] Specifiy the external input to the inhibitory population (default = 0.5). <br>
 `--ic_rE` [optional] Specify the initial average firing rate of the excitatory population (default = 0.32). <br>
 `--ic_rI` [optional] Specify the initial average firing rate of the inhibitory population (default = 0.15). <br>
 `--ic_rI` [optional] Specify a param to vary (can edit range within code) (default = wEE). <br>
 
-`python3 2d_bifurcation.py --region [dg, ca3, ca1] --param1 --param2 --min1 --max1 --min2 --max2 --ext_E --ext_I` 
+#### `python3 2d_bifurcation.py --region [dg, ca3, ca1] --param1 --param2 --min1 --max1 --min2 --max2 --ext_E --ext_I` 
 This script plots a 2D Bifurcation analysis with trajectories of the two given parameters and parameter ranges.
 
 `--param1` and `--param2` Specify the two parameters whose combinations you want to analyze. <br>
