@@ -20,12 +20,15 @@ $$\Delta r_E = \frac{dt}{\tau_E} \left( -r_E[k] + F(w_{EE} \cdot (1 - ACh) \cdot
 
 ## Scripts
 
-1. `python3 trisynaptic.py --theta_osc`
+`python3 trisynaptic.py --theta_osc`
 This script simulates the entire trisynaptic circuit of the hippocampus. It consists of 3 feedforward Wilson Cowan Models that simulate the DG, CA3 and CA1 regions of the hippocampus, driven by a simulated external theta modulated input from the entorhinal cortex (EC). The flow of the trisynaptic circuit is: EC -> DG -> CA3 -> CA1.
 
 `--theta_osc` [optiona] Add theta oscillations to simulate the input from the entorhinal cortex (EC) to the dentate gyrus (DG).
+`--ach` [optional] Inject acetylcholine into all three regions (DG, CA3, CA1) to model diffuse effects.
+`--ec_E` [optional] Control the magnitude of the external input (Gaussian noise) from EC to the excitatory population if not configuring for theta oscillations.
+`--ec_I` [optional] Control the magnitude of the external input (Gaussian noise) from EC to the inhibitory population if not configuring for theta oscillations.
 
-2. `python3 simulate.py --region [dg, ca3, ca1] --is_DG_input --is_acetylcholine --ext_E --ext_I --ic_rE --ic_rI`
+`python3 simulate.py --region [dg, ca3, ca1] --is_DG_input --is_acetylcholine --ext_E --ext_I --ic_rE --ic_rI`
 This script simulates a specified region of the hippocampus (i.e. DG, CA3, CA1). It solves the Wilson Cowan differential equations using Euler's method over discrete time steps. It generates several result plots: mean firing rates over time, mean firing rates across different parameter values, nullclines, bifurcations, and prints out the system's fixed points.
 
 `--region` Specify the region to simulate (dg, ca3, ca1).
@@ -40,7 +43,7 @@ This script simulates a specified region of the hippocampus (i.e. DG, CA3, CA1).
 `--ic_rI` [optiona] Specify the initial average firing rate of the inhibitory population.
 <br>
 
-3. `python3 2d_bifurcation.py --region [dg, ca3, ca1] --param1 --param2 --min1 --max1 --min2 --max2 --ext_E --ext_I` This script plots a 2D Bifurcation analysis of the two given parameters. You can specify a range for each parameter (i.e. `--min1` to `--max1`) to plot the combinations. It classifies fixed points into stable/unstable, oscillatory, saddle. 
+`python3 2d_bifurcation.py --region [dg, ca3, ca1] --param1 --param2 --min1 --max1 --min2 --max2 --ext_E --ext_I` This script plots a 2D Bifurcation analysis of the two given parameters. You can specify a range for each parameter (i.e. `--min1` to `--max1`) to plot the combinations. It classifies fixed points into stable/unstable, oscillatory, saddle. 
 
 ## Requirements
 `pip install -r requirements`

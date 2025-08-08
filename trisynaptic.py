@@ -36,8 +36,8 @@ def main(args):
     ca3_wEC_E = 0.5
     ca3_wEC_I = 0.5
 
-    ca3_pars['ext_E'] = ca3_wDG_E * rE_dg + ca3_wEC_E * entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=args.theta_osc)[0]
-    ca3_pars['ext_I'] = ca3_wDG_I * rI_dg + ca3_wEC_I * entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=args.theta_osc)[1]
+    ca3_pars['ext_E'] = ca3_wDG_E * rE_dg + ca3_wEC_E * entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=args.theta_osc, EC_E=args.ec_E, EC_I=args.ec_I)[0]
+    ca3_pars['ext_I'] = ca3_wDG_I * rI_dg + ca3_wEC_I * entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=args.theta_osc, EC_E=args.ec_E, EC_I=args.ec_I)[1]
     ca3_pars['is_acetylcholine'] = args.ach_dg
     
     ca3 = CA3_WilsonCowan(**ca3_pars)
@@ -67,12 +67,9 @@ def main(args):
 
     # plot activity with ACh
     if args.ach_dg:
-        fig = dg.plot_activity_with_ach(rE_dg, rI_dg, title="DG Activity with ACh Modulation")
-        fig.show()
-        fig = ca3.plot_activity_with_ach(rE_ca3, rI_ca3, title="CA3 Activity with ACh Modulation")
-        fig.show()
-        fig = ca1.plot_activity_with_ach(rE_ca1, rI_ca1, title="CA1 Activity with ACh Modulation")
-        fig.show()
+        dg.plot_activity_with_ach(rE_dg, rI_dg, title="DG Activity with ACh Modulation")
+        ca3.plot_activity_with_ach(rE_ca3, rI_ca3, title="CA3 Activity with ACh Modulation")
+        ca1.plot_activity_with_ach(rE_ca1, rI_ca1, title="CA1 Activity with ACh Modulation")
 
     # plot rate results
     if args.ach_dg:
@@ -114,17 +111,17 @@ def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc,
     # Plot results with proper time axis
     if ach_trace is not None:
         plt.figure(figsize=(10, 10)) # Make figure taller to accommodate ACh plot
-        n_plots = 5
+        n_plots = 6
     else:
         plt.figure(figsize=(10, 8))
-        n_plots = 4
+        n_plots = 5
     
     # Plot 1: Excitatory rates over time
     plt.subplot(3, 2, 1)
     plt.plot(time_array, rE_dg, label='DG', linewidth=2)
     plt.plot(time_array, rE_ca3, label='CA3', linewidth=2)
     plt.plot(time_array, rE_ca1, label='CA1', linewidth=2)
-    plt.ylim(0, 1)
+    plt.ylim(0, 0.5)
     plt.xlabel('Time (ms)')
     plt.ylabel('Excitatory Rate')
     plt.title('Excitatory Activity Across Regions')
@@ -134,10 +131,10 @@ def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc,
 
     # Plot 2: External input to DG (theta or noise)
     plt.subplot(3, 2, 2)
-    ec_input_e, ec_input_i = entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=theta_osc, EC_E=args.EC_E, EC_I=args.EC_I)
+    ec_input_e, ec_input_i = entorhinal_inputs(dg_pars['T'], dg_pars['dt'], theta_oscillation=theta_osc, EC_E=args.ec_E, EC_I=args.ec_I)
     plt.plot(time_array, ec_input_e, label='EC → E', linewidth=2, color='blue')
     plt.plot(time_array, ec_input_i, label='EC → I', linewidth=2, color='red')
-    plt.ylim(0, 3)
+    plt.ylim(0, max(ec_input_e.max(), ec_input_i.max()) + 1)
     plt.xlabel('Time (ms)')
     plt.ylabel('Input Amplitude')
     if theta_osc:
@@ -148,11 +145,11 @@ def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc,
     plt.grid(True, alpha=0.3)
     
 
-    # Plot 3: All rates (E and I) for each region
+    # Plot 3: DG
     plt.subplot(3, 2, 3)
-    plt.plot(time_array, rE_dg, label='DG E', linewidth=2)
-    plt.plot(time_array, rI_dg, label='DG I', linewidth=2, linestyle='--')
-    plt.ylim(0, 1)
+    plt.plot(time_array, rE_dg, label='DG E', linewidth=2, color='green')
+    plt.plot(time_array, rI_dg, label='DG I', linewidth=2, color='red')
+    plt.ylim(0, 0.5)
     plt.xlabel('Time (ms)')
     plt.ylabel('Activity Rate')
     plt.title('DG Activity')
@@ -160,28 +157,37 @@ def plot_rates(rE_dg, rI_dg, rE_ca3, rI_ca3, rE_ca1, rI_ca1, dg_pars, theta_osc,
     plt.grid(True, alpha=0.3)
     
 
-    # Plot 4: CA3 and CA1 comparison
+    # Plot 4: CA3 
     plt.subplot(3, 2, 4)
     plt.plot(time_array, rE_ca3, label='CA3 E', linewidth=2, color='green')
-    plt.plot(time_array, rI_ca3, label='CA3 I', linewidth=2, linestyle='--', color='red')
-    plt.plot(time_array, rE_ca1, label='CA1 E', linewidth=2, color='blue')
-    plt.plot(time_array, rI_ca1, label='CA1 I', linewidth=2, linestyle='--', color='pink')
-    plt.ylim(0, 1)
+    plt.plot(time_array, rI_ca3, label='CA3 I', linewidth=2, color='red')
+    plt.ylim(0, 0.5)
     plt.xlabel('Time (ms)')
     plt.ylabel('Activity Rate')
-    plt.title('CA3 and CA1 Activity')
+    plt.title('CA3 Activity')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+
+    # Plot 5: CA1 
+    plt.subplot(3, 2, 5)
+    plt.plot(time_array, rE_ca1, label='CA1 E', linewidth=2, color='green')
+    plt.plot(time_array, rI_ca1, label='CA1 I', linewidth=2, color='red')
+    plt.ylim(0, 0.5)
+    plt.xlabel('Time (ms)')
+    plt.ylabel('Activity Rate')
+    plt.title('CA1 Activity')
     plt.legend()
     plt.grid(True, alpha=0.3)
     
 
     # Plot 5: Acetylcholine in DG (if added)
     if ach_trace is not None:
-        plt.subplot(3, 2, 5)  # Changed from 2,2,5 to 3,2,5
+        plt.subplot(3, 2, 6)  # Changed from 2,2,5 to 3,2,5
         plt.plot(time_array, ach_trace, label='DG ACh', linewidth=2, color='purple')
-        plt.ylim(0, 1)
+        plt.ylim(0, 0.8)
         plt.xlabel('Time (ms)')
         plt.ylabel('Acetylcholine Level')
-        plt.title('Acetylcholine in DG')
+        plt.title('Acetylcholine in Hippocampus')
         plt.legend()
         plt.grid(True, alpha=0.3)
 
@@ -195,8 +201,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Simulate the trisynaptic circuit of the hippocampus.')
     parser.add_argument('--theta_osc', action='store_true', help='Use theta oscillation input')
     parser.add_argument('--ach_dg', action='store_true', help='Add acetylcholine to DG')
-    parser.add_argument('--EC_E', type=float, required=False, default=2.0, help='Specify external input to excitatory population')
-    parser.add_argument('--EC_I', type=float, required=False, default=2.0, help='Specify external input to inhibitory population')
+    parser.add_argument('--ec_E', type=float, required=False, default=3.0, help='Specify external input to excitatory population')
+    parser.add_argument('--ec_I', type=float, required=False, default=3.0, help='Specify external input to inhibitory population')
     args = parser.parse_args()
 
     main(args)

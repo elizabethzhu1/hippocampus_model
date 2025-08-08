@@ -20,9 +20,9 @@ def set_dg_parameters(**kwargs):
 
   # Weights
   pars['wEE'] = 1.0       # low recurrency among granule cells
-  pars['wIE'] = 3.0       # some granule cells excite interneurons
+  pars['wIE'] = 5.0       # some granule cells excite interneurons
   pars['wEI'] = 8.0       # inhibition to granule cells is strong
-  pars['wII'] = 5.0       # some inhibitory recurrence
+  pars['wII'] = 3.0       # some inhibitory recurrence
 
   # Adaptation
   pars['tau_A'] = 10     
@@ -55,8 +55,8 @@ def set_ca3_parameters(**kwargs):
   pars['a_I'] = 2.0    # Gain of the I population
 
   # Thresholds
-  pars['theta_E'] = 1.5  # Threshold of the E population
-  pars['theta_I'] = 1.5  # Threshold of the I population
+  pars['theta_E'] = 1.4  # Threshold of the E population
+  pars['theta_I'] = 1.8  # Threshold of the I population
 
   # Weights
   pars['wEE'] = 10 # E to E
@@ -94,14 +94,14 @@ def set_ca1_parameters(**kwargs):
   pars['a_I'] = 2.0    
   
   # Thresholds
-  pars['theta_E'] = 1.8  
+  pars['theta_E'] = 1.8  # higher than Ca3
   pars['theta_I'] = 1.5 
   
   # Weights
-  pars['wEE'] = 8     
-  pars['wIE'] = 8    
+  pars['wEE'] = 4     
+  pars['wIE'] = 7   
   pars['wEI'] = 5   
-  pars['wII'] = 5      
+  pars['wII'] = 4      
   
   # Adaptation
   pars['tau_A'] = 10
